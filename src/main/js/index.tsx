@@ -23,5 +23,6 @@
  */
 
 import { binder } from "@scm-manager/ui-extensions";
+import FileLockIcon from "./FileLockIcon";
 
-binder.bind("", "");
+binder.bind("repos.sources.tree.row.right", FileLockIcon, (props) => !!props.file._embedded.fileLock);
