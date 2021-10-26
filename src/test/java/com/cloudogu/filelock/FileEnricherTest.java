@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sonia.scm.api.v2.resources.HalAppender;
 import sonia.scm.api.v2.resources.HalEnricherContext;
+import sonia.scm.api.v2.resources.ScmPathInfoStore;
 import sonia.scm.repository.FileObject;
 import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryManager;
@@ -42,11 +43,14 @@ import sonia.scm.repository.api.LockCommandBuilder;
 import sonia.scm.repository.api.RepositoryService;
 import sonia.scm.repository.api.RepositoryServiceFactory;
 
+import javax.inject.Provider;
+import java.net.URI;
 import java.time.Instant;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -58,6 +62,9 @@ class FileEnricherTest {
 
   private final Repository repository = new Repository("id-1", "git", "hitchhiker", "HeartOfGold");
 
+
+  @Mock
+  Provider<ScmPathInfoStore> scmPathInfoStoreProvider;
   @Mock
   private HalAppender appender;
   @Mock
@@ -77,6 +84,9 @@ class FileEnricherTest {
   @BeforeEach
   void init() {
     when(repositoryManager.get(repository.getNamespaceAndName())).thenReturn(repository);
+    ScmPathInfoStore scmPathInfoStore = new ScmPathInfoStore();
+    scmPathInfoStore.set(() -> URI.create("scm/api/"));
+    lenient().when(scmPathInfoStoreProvider.get()).thenReturn(scmPathInfoStore);
   }
 
   @Test
@@ -109,13 +119,14 @@ class FileEnricherTest {
     enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
 
     verify(appender).appendEmbedded("fileLock", dto);
+    verify(appender).appendLink("unlock", "scm/api/v2/file-lock/hitchhiker/HeartOfGold/unlock/myfile");
   }
 
   @Test
   @SubjectAware(permissions = "repository:push:id-1")
-  void shouldNotEnrichIfNotLocked() {
+  void shouldOnlyEnrichLockLink() {
     FileObject fileObject = mock(FileObject.class);
-    String filepath = "myfile";
+    String filepath = "src/myfile";
 
     when(fileObject.getPath()).thenReturn(filepath);
     when(serviceFactory.create(repository)).thenReturn(service);
@@ -125,5 +136,6 @@ class FileEnricherTest {
     enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
 
     verify(appender, never()).appendEmbedded(anyString(), any(FileLockDto.class));
+    verify(appender).appendLink("lock", "scm/api/v2/file-lock/hitchhiker/HeartOfGold/lock/src%2Fmyfile");
   }
 }

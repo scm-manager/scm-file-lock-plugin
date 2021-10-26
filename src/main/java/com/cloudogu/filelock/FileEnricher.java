@@ -27,27 +27,33 @@ import sonia.scm.api.v2.resources.Enrich;
 import sonia.scm.api.v2.resources.HalAppender;
 import sonia.scm.api.v2.resources.HalEnricher;
 import sonia.scm.api.v2.resources.HalEnricherContext;
+import sonia.scm.api.v2.resources.ScmPathInfoStore;
 import sonia.scm.plugin.Extension;
 import sonia.scm.repository.FileObject;
 import sonia.scm.repository.NamespaceAndName;
 import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryManager;
 import sonia.scm.repository.RepositoryPermissions;
+import sonia.scm.repository.api.FileLock;
 import sonia.scm.repository.api.RepositoryService;
 import sonia.scm.repository.api.RepositoryServiceFactory;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.Optional;
 
 @Extension
 @Enrich(FileObject.class)
 public class FileEnricher implements HalEnricher {
 
+  private final Provider<ScmPathInfoStore> scmPathInfoStore;
   private final RepositoryServiceFactory serviceFactory;
   private final FileLockMapper mapper;
   private final RepositoryManager repositoryManager;
 
   @Inject
-  public FileEnricher(RepositoryServiceFactory serviceFactory, FileLockMapper mapper, RepositoryManager repositoryManager) {
+  public FileEnricher(Provider<ScmPathInfoStore> scmPathInfoStore, RepositoryServiceFactory serviceFactory, FileLockMapper mapper, RepositoryManager repositoryManager) {
+    this.scmPathInfoStore = scmPathInfoStore;
     this.serviceFactory = serviceFactory;
     this.mapper = mapper;
     this.repositoryManager = repositoryManager;
@@ -60,9 +66,14 @@ public class FileEnricher implements HalEnricher {
 
     if (RepositoryPermissions.push(repository).isPermitted()) {
       try (RepositoryService service = serviceFactory.create(repository)) {
-        service.getLockCommand()
-          .status(fileObject.getPath())
-          .ifPresent(fileLock -> appender.appendEmbedded("fileLock", mapper.map(fileLock)));
+        Optional<FileLock> fileLockStatus = service.getLockCommand().status(fileObject.getPath());
+        RestApiLinks restApiLinks = new RestApiLinks(scmPathInfoStore.get().get().getApiRestUri());
+        if (fileLockStatus.isPresent()) {
+          appender.appendLink("unlock", restApiLinks.fileLock().unlockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
+          appender.appendEmbedded("fileLock", mapper.map(fileLockStatus.get()));
+        } else {
+          appender.appendLink("lock", restApiLinks.fileLock().lockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
+        }
       }
     }
   }
