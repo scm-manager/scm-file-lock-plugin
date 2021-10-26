@@ -24,5 +24,7 @@
 
 import { binder } from "@scm-manager/ui-extensions";
 import FileLockIcon from "./FileLockIcon";
+import FileLockButton from "./FileLockButton";
 
-binder.bind("repos.sources.tree.row.right", FileLockIcon, (props) => !!props.file._embedded.fileLock);
+binder.bind("repos.sources.tree.row.right", FileLockIcon);
+binder.bind("repos.sources.content.actionbar", FileLockButton, { priority: 1000 });

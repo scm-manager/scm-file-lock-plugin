@@ -2,6 +2,9 @@
   "scm-file-lock-plugin": {
     "lockIcon": {
       "tooltip": "Gesperrt von {{userId}} {{timestamp}}"
+    },
+    "unlockIcon": {
+      "tooltip": "Datei sperren"
     }
   }
 }

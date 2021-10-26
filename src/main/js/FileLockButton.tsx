@@ -30,8 +30,8 @@ type Props = {
   file: File;
 };
 
-const FileLockIcon: FC<Props> = ({ repository, file }) => {
-  return <FileLockAction repository={repository} file={file} type="ICON" />;
+const FileLockButton: FC<Props> = ({ repository, file }) => {
+  return <FileLockAction repository={repository} file={file} type="BUTTON" />;
 };
 
-export default FileLockIcon;
+export default FileLockButton;
