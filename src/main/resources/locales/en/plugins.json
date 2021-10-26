@@ -1,5 +1,7 @@
 {
   "scm-file-lock-plugin": {
-
+    "lockIcon": {
+      "tooltip": "Locked by {{userId}} {{timestamp}}"
+    }
   }
 }

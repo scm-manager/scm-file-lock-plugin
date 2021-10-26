@@ -21,11 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import React, { FC } from "react";
+import { File } from "@scm-manager/ui-types";
+import { Tooltip, Icon, useDateFormatter } from "@scm-manager/ui-components";
+import { useTranslation } from "react-i18next";
 
-describe("frontend unit tests", () => {
+type Props = {
+  file: File;
+};
 
-  it("some test", () => {
-    expect( 21 * 2 ).toBe(42);
-  });
+type FileLock = {
+  userId: string;
+  timestamp: Date;
+};
 
-});
+const FileLockIcon: FC<Props> = ({ file }) => {
+  const [t] = useTranslation("plugins");
+  const fileLock: FileLock = file._embedded?.fileLock;
+  const formatter = useDateFormatter({ date: fileLock.timestamp });
+
+  return (
+    <Tooltip
+      message={t("scm-file-lock-plugin.lockIcon.tooltip", {
+        userId: fileLock.userId,
+        timestamp: formatter?.formatDistance()
+      })}
+      location="top"
+    >
+      <Icon name="lock" color="warning" />
+    </Tooltip>
+  );
+};
+
+export default FileLockIcon;
