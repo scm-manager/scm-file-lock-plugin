@@ -14,6 +14,12 @@
     },
     "downloadLock": {
       "tooltip": "You may download the file but not commit any changes"
+    },
+    "uploadLockModal": {
+      "title": "Files are locked",
+      "description": "The files you are trying to upload are locked. You can unlock all conflicting files and upload afterwards.",
+      "unlockButton": "Unlock conflicting files",
+      "cancelButton": "Cancel"
     }
   }
 }

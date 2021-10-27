@@ -54,7 +54,7 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, isValid, path }) =>
       return `${path}/${file.path}`;
     }
     return file.path;
-  }
+  };
 
   const validate = () => {
     let valid = true;
@@ -97,6 +97,7 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, isValid, path }) =>
               label={t("scm-file-lock-plugin.uploadLockModal.unlockButton")}
               action={() => unlockConflictingFiles()}
             />
+            <Button label={t("scm-file-lock-plugin.uploadLockModal.cancelButton")} action={() => setShowModal(false)} />
           </ButtonGroup>
         }
       />
