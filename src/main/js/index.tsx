@@ -23,8 +23,7 @@
  */
 
 import { binder } from "@scm-manager/ui-extensions";
-import FileLockIcon from "./FileLockIcon";
-import FileLockButton from "./FileLockButton";
+import { FileLockButton, FileLockIcon } from "./FileLockAction";
 import { FileLockDownloadButton, FileLockDownloadIcon } from "./FileLockDownloadAction";
 import FileLockUploadModal from "./FileLockUploadModal";
 

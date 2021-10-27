@@ -82,4 +82,10 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
   return null;
 };
 
-export default FileLockAction;
+export const FileLockButton: FC<Props> = ({ repository, file }) => {
+  return <FileLockAction repository={repository} file={file} type="BUTTON" />;
+};
+
+export const FileLockIcon: FC<Props> = ({ repository, file }) => {
+  return <FileLockAction repository={repository} file={file} type="ICON" />;
+};
