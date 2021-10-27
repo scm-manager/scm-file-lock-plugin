@@ -32,9 +32,10 @@ type Props = {
   repository: Repository;
   files: File[];
   isValid: (valid: boolean) => void;
+  path: string;
 };
 
-const FileLockUploadModal: FC<Props> = ({ repository, files, isValid }) => {
+const FileLockUploadModal: FC<Props> = ({ repository, files, isValid, path }) => {
   const { data, error } = useFileLocks(repository);
   const { unlockFiles, error: unlockError } = useUnlockFiles(repository);
   const [showModal, setShowModal] = useState(false);
@@ -48,10 +49,17 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, isValid }) => {
     }
   }, [repository, files, data]);
 
+  const resolveFilePath = (file: File) => {
+    if (path) {
+      return `${path}/${file.path}`;
+    }
+    return file.path;
+  }
+
   const validate = () => {
     let valid = true;
     for (let file of files) {
-      if ((data?._embedded?.fileLocks as FileLock[]).some(lockedFile => lockedFile.path === file.path)) {
+      if ((data?._embedded?.fileLocks as FileLock[]).some(lockedFile => lockedFile.path === resolveFilePath(file))) {
         valid = false;
       }
     }
@@ -62,7 +70,7 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, isValid }) => {
     const conflictingLocks: FileLock[] = [];
     for (let file of files) {
       for (let lock of data?._embedded?.fileLocks as FileLock[]) {
-        if (lock.path === file.path) {
+        if (lock.path === resolveFilePath(file)) {
           conflictingLocks.push(lock);
         }
       }
