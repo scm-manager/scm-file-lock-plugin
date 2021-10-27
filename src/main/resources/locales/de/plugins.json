@@ -5,6 +5,15 @@
     },
     "unlockIcon": {
       "tooltip": "Datei sperren"
+    },
+    "downloadModal": {
+      "title": "Datei sperren?",
+      "description": "Gesperrte Dateien können nicht von anderen Benutzern geändert werden. Die Sperre kann von jedem Nutzer mit Schreibrechten auf dieses Repository entfernt werden.",
+      "lockDownloadButton": "Sperren und herunterladen",
+      "downloadButton": "Ohne Sperre herunterladen"
+    },
+    "downloadLock": {
+      "tooltip": "Gesperrte Dateien können heruntergeladen aber nicht verändert werden"
     }
   }
 }

@@ -5,6 +5,15 @@
     },
     "unlockIcon": {
       "tooltip": "Lock this file"
+    },
+    "downloadModal": {
+      "title": "Lock file?",
+      "description": "You may lock this file to prevent other users from changing it until you commit your changes. If you do not lock the file you may be unable to commit changes to this file.",
+      "lockDownloadButton": "Lock and download",
+      "downloadButton": "Download without locking"
+    },
+    "downloadLock": {
+      "tooltip": "You may download the file but not commit any changes"
     }
   }
 }
