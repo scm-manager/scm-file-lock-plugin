@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 import React, { FC } from "react";
-import { File, Repository } from "@scm-manager/ui-types";
+import { File, HalRepresentation, Repository } from "@scm-manager/ui-types";
 import { Button, Tooltip, useDateFormatter } from "@scm-manager/ui-components";
 import { useTranslation } from "react-i18next";
 import { useFileLock } from "./useFileLock";
@@ -34,9 +34,11 @@ type Props = {
   type: "BUTTON" | "ICON";
 };
 
-export type FileLock = {
+export type FileLock = HalRepresentation & {
   userId: string;
   timestamp: Date;
+  path: string;
+  writeAccess: boolean;
 };
 
 const FileLockAction: FC<Props> = ({ repository, file, type }) => {

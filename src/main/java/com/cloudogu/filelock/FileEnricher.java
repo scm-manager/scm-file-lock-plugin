@@ -70,7 +70,7 @@ public class FileEnricher implements HalEnricher {
         RestApiLinks restApiLinks = new RestApiLinks(scmPathInfoStore.get().get().getApiRestUri());
         if (fileLockStatus.isPresent()) {
           appender.appendLink("unlock", restApiLinks.fileLock().unlockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
-          appender.appendEmbedded("fileLock", mapper.map(fileLockStatus.get()));
+          appender.appendEmbedded("fileLock", mapper.map(repository, fileLockStatus.get()));
         } else {
           appender.appendLink("lock", restApiLinks.fileLock().lockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
         }

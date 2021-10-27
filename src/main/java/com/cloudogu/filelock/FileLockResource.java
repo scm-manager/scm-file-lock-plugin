@@ -24,6 +24,9 @@
 package com.cloudogu.filelock;
 
 import com.cloudogu.jaxrstie.GenerateLinkBuilder;
+import de.otto.edison.hal.Embedded;
+import de.otto.edison.hal.HalRepresentation;
+import de.otto.edison.hal.Links;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,16 +35,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import sonia.scm.api.v2.resources.ErrorDto;
 import sonia.scm.repository.NamespaceAndName;
+import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryPermissions;
+import sonia.scm.repository.api.FileLock;
 import sonia.scm.repository.api.RepositoryService;
 import sonia.scm.repository.api.RepositoryServiceFactory;
 import sonia.scm.web.VndMediaType;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Path("v2/file-lock")
 @OpenAPIDefinition(tags = {
@@ -51,10 +62,12 @@ import javax.ws.rs.PathParam;
 public class FileLockResource {
 
   private final RepositoryServiceFactory serviceFactory;
+  private final FileLockMapper mapper;
 
   @Inject
-  public FileLockResource(RepositoryServiceFactory serviceFactory) {
+  public FileLockResource(RepositoryServiceFactory serviceFactory, FileLockMapper mapper) {
     this.serviceFactory = serviceFactory;
+    this.mapper = mapper;
   }
 
   @POST
@@ -106,6 +119,42 @@ public class FileLockResource {
     try (RepositoryService service = serviceFactory.create(new NamespaceAndName(namespace, name))) {
       RepositoryPermissions.push(service.getRepository()).check();
       service.getLockCommand().unlock().setFile(path).execute();
+    }
+  }
+
+  @GET
+  @Path("{namespace}/{name}")
+  @Produces("application/json")
+  @Operation(
+    summary = "Get all locked files",
+    description = "Get all locked files for repository.",
+    tags = "File Lock",
+    operationId = "file_lock_get_all"
+  )
+  @ApiResponse(responseCode = "200", description = "success")
+  @ApiResponse(responseCode = "401", description = "not authenticated / invalid credentials")
+  @ApiResponse(responseCode = "403", description = "not authorized, the current user does not have the push privilege on this repository")
+  @ApiResponse(
+    responseCode = "500",
+    description = "internal server error",
+    content = @Content(
+      mediaType = VndMediaType.ERROR_TYPE,
+      schema = @Schema(implementation = ErrorDto.class)
+    )
+  )
+  public HalRepresentation getAll(@Context UriInfo uriInfo, @PathParam("namespace") String namespace, @PathParam("name") String name) {
+    try (RepositoryService service = serviceFactory.create(new NamespaceAndName(namespace, name))) {
+      Repository repository = service.getRepository();
+      RepositoryPermissions.push(repository).check();
+      Collection<FileLock> fileLocks = service.getLockCommand().getAll();
+      String selfLink = new RestApiLinks(uriInfo).fileLock().getAll(repository.getNamespace(), repository.getName()).asString();
+      return new HalRepresentation(
+        Links.linkingTo().self(selfLink).build(),
+        Embedded.embeddedBuilder().with(
+          "fileLocks",
+          fileLocks.stream().map((FileLock fileLock) -> mapper.map(repository, fileLock)).collect(Collectors.toList()
+          )
+        ).build());
     }
   }
 }

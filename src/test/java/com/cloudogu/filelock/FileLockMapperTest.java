@@ -23,22 +23,57 @@
  */
 package com.cloudogu.filelock;
 
+import com.google.inject.util.Providers;
+import org.github.sdorra.jse.ShiroExtension;
+import org.github.sdorra.jse.SubjectAware;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import sonia.scm.api.v2.resources.ScmPathInfoStore;
+import sonia.scm.repository.FileObject;
+import sonia.scm.repository.Repository;
+import sonia.scm.repository.RepositoryTestData;
 import sonia.scm.repository.api.FileLock;
 
+import java.net.URI;
 import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(ShiroExtension.class)
 class FileLockMapperTest {
 
+  private final Repository repository = RepositoryTestData.create42Puzzle();
   FileLockMapper mapper = new FileLockMapperImpl();
 
+  @BeforeEach
+  void init() {
+    ScmPathInfoStore scmPathInfoStore = new ScmPathInfoStore();
+    scmPathInfoStore.set(() -> URI.create("scm/api"));
+    mapper.setScmPathInfoStoreProvider(Providers.of(scmPathInfoStore));
+  }
+
   @Test
-  void mapToDto() {
-    FileLockDto dto = mapper.map(new FileLock("trillian", Instant.ofEpochMilli(10000)));
+  @SubjectAware(value = "trillian")
+  void mapToDtoWithWriteAccess() {
+    FileObject fileObject = new FileObject();
+    fileObject.setPath("src/test.md");
+    FileLockDto dto = mapper.map(repository, new FileLock("src/test.md", "", "trillian", Instant.ofEpochMilli(10000)));
 
     assertThat(dto.getTimestamp()).isEqualTo(Instant.ofEpochMilli(10000));
     assertThat(dto.getUserId()).isEqualTo("trillian");
+    assertThat(dto.getPath()).isEqualTo(fileObject.getPath());
+    assertThat(dto.isWriteAccess()).isTrue();
+    assertThat(dto.getLinks().getLinkBy("unlock").get().getHref()).isEqualTo("scm/api/v2/file-lock/hitchhiker/42Puzzle/unlock/src%2Ftest.md");
+  }
+
+  @Test
+  @SubjectAware(value = "dent")
+  void mapToDtoWithoutWriteAccess() {
+    FileLockDto dto = mapper.map(repository, new FileLock("src/test.md", "", "trillian", Instant.ofEpochMilli(10000)));
+
+    assertThat(dto.isWriteAccess()).isFalse();
+    assertThat(dto.getLinks().getLinkBy("unlock").get().getHref()).isEqualTo("scm/api/v2/file-lock/hitchhiker/42Puzzle/unlock/src%2Ftest.md");
   }
 }

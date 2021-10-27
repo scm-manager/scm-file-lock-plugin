@@ -62,7 +62,6 @@ class FileEnricherTest {
 
   private final Repository repository = new Repository("id-1", "git", "hitchhiker", "HeartOfGold");
 
-
   @Mock
   Provider<ScmPathInfoStore> scmPathInfoStoreProvider;
   @Mock
@@ -91,7 +90,7 @@ class FileEnricherTest {
 
   @Test
   void shouldNotEnrichWithoutPermission() {
-    FileLock fileLock = new FileLock("trillian", Instant.ofEpochMilli(10000));
+    FileLock fileLock = new FileLock("src/test.md", "" ,"trillian", Instant.ofEpochMilli(10000));
     FileObject fileObject = mock(FileObject.class);
     String filepath = "myfile";
 
@@ -105,8 +104,8 @@ class FileEnricherTest {
   @Test
   @SubjectAware(permissions = "repository:push:id-1")
   void shouldEnrichWithPushPermission() {
-    FileLock fileLock = new FileLock("trillian", Instant.ofEpochMilli(10000));
-    FileLockDto dto = new FileLockDto("trillian", Instant.ofEpochMilli(10000));
+    FileLock fileLock = new FileLock("src/test.md", "" ,"trillian", Instant.ofEpochMilli(10000));
+    FileLockDto dto = new FileLockDto("trillian", Instant.ofEpochMilli(10000), "myfile", false);
     FileObject fileObject = mock(FileObject.class);
     String filepath = "myfile";
 
@@ -114,7 +113,7 @@ class FileEnricherTest {
     when(serviceFactory.create(repository)).thenReturn(service);
     when(service.getLockCommand()).thenReturn(lockCommandBuilder);
     when(lockCommandBuilder.status(filepath)).thenReturn(Optional.of(fileLock));
-    when(mapper.map(fileLock)).thenReturn(dto);
+    when(mapper.map(repository, fileLock)).thenReturn(dto);
 
     enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
 

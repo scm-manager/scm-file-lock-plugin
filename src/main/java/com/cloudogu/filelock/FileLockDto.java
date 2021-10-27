@@ -24,6 +24,7 @@
 package com.cloudogu.filelock;
 
 import de.otto.edison.hal.HalRepresentation;
+import de.otto.edison.hal.Links;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -40,4 +41,10 @@ import java.time.Instant;
 public class FileLockDto extends HalRepresentation {
   private String userId;
   private Instant timestamp;
+  private String path;
+  private boolean writeAccess;
+
+  public FileLockDto(Links links) {
+    super(links);
+  }
 }
