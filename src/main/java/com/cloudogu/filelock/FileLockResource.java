@@ -51,12 +51,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
-import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Path("v2/file-lock")
 @OpenAPIDefinition(tags = {
-  @Tag(name = "Custom Links", description = "Custom links plugin related endpoints")
+  @Tag(name = "File Lock", description = "File Lock plugin related endpoints")
 })
 @GenerateLinkBuilder(className = "RestApiLinks")
 public class FileLockResource {
@@ -118,7 +117,7 @@ public class FileLockResource {
   public void unlockFile(@PathParam("namespace") String namespace, @PathParam("name") String name, @PathParam("path") String path) {
     try (RepositoryService service = serviceFactory.create(new NamespaceAndName(namespace, name))) {
       RepositoryPermissions.push(service.getRepository()).check();
-      service.getLockCommand().unlock().setFile(path).execute();
+      service.getLockCommand().unlock().setFile(path).force(true).execute();
     }
   }
 
@@ -146,16 +145,25 @@ public class FileLockResource {
     try (RepositoryService service = serviceFactory.create(new NamespaceAndName(namespace, name))) {
       Repository repository = service.getRepository();
       RepositoryPermissions.push(repository).check();
-      Collection<FileLock> fileLocks = service.getLockCommand().getAll();
-      String selfLink = new RestApiLinks(uriInfo).fileLock().getAll(repository.getNamespace(), repository.getName()).asString();
       return new HalRepresentation(
-        Links.linkingTo().self(selfLink).build(),
-        Embedded.embeddedBuilder().with(
-          "fileLocks",
-          fileLocks.stream().map((FileLock fileLock) -> mapper.map(repository, fileLock)).collect(Collectors.toList()
-          )
-        ).build());
+        createLinks(uriInfo, repository),
+        createEmbedded(service, repository));
     }
+  }
+
+  private Links createLinks(UriInfo uriInfo, Repository repository) {
+    String selfLink = new RestApiLinks(uriInfo).fileLock().getAll(repository.getNamespace(), repository.getName()).asString();
+    return Links.linkingTo().self(selfLink).build();
+  }
+
+  private Embedded createEmbedded(RepositoryService service, Repository repository) {
+    return Embedded.embeddedBuilder().with(
+      "fileLocks",
+      service.getLockCommand().getAll().stream()
+        .map((FileLock fileLock) -> mapper.map(repository, fileLock))
+        .collect(Collectors.toList()
+      )
+    ).build();
   }
 }
 

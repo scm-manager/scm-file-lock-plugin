@@ -56,7 +56,7 @@ class FileLockMapperTest {
 
   @Test
   @SubjectAware(value = "trillian")
-  void mapToDtoWithWriteAccess() {
+  void mapToDto() {
     FileObject fileObject = new FileObject();
     fileObject.setPath("src/test.md");
     FileLockDto dto = mapper.map(repository, new FileLock("src/test.md", "", "trillian", Instant.ofEpochMilli(10000)));
@@ -64,16 +64,6 @@ class FileLockMapperTest {
     assertThat(dto.getTimestamp()).isEqualTo(Instant.ofEpochMilli(10000));
     assertThat(dto.getUserId()).isEqualTo("trillian");
     assertThat(dto.getPath()).isEqualTo(fileObject.getPath());
-    assertThat(dto.isWriteAccess()).isTrue();
-    assertThat(dto.getLinks().getLinkBy("unlock").get().getHref()).isEqualTo("scm/api/v2/file-lock/hitchhiker/42Puzzle/unlock/src%2Ftest.md");
-  }
-
-  @Test
-  @SubjectAware(value = "dent")
-  void mapToDtoWithoutWriteAccess() {
-    FileLockDto dto = mapper.map(repository, new FileLock("src/test.md", "", "trillian", Instant.ofEpochMilli(10000)));
-
-    assertThat(dto.isWriteAccess()).isFalse();
     assertThat(dto.getLinks().getLinkBy("unlock").get().getHref()).isEqualTo("scm/api/v2/file-lock/hitchhiker/42Puzzle/unlock/src%2Ftest.md");
   }
 }

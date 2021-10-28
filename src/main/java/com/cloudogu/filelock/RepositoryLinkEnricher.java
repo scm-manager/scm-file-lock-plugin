@@ -50,9 +50,16 @@ public class RepositoryLinkEnricher implements HalEnricher {
   @Override
   public void enrich(HalEnricherContext context, HalAppender appender) {
     Repository repository = context.oneRequireByType(Repository.class);
+    appendLinks(appender, repository);
+  }
+
+  private void appendLinks(HalAppender appender, Repository repository) {
     RestApiLinks restApiLinks = new RestApiLinks(scmPathInfoStoreProvider.get().get().getApiRestUri());
     if (RepositoryPermissions.push(repository).isPermitted()) {
-      appender.appendLink("fileLocks", restApiLinks.fileLock().getAll(repository.getNamespace(), repository.getName()).asString());
+      appender.appendLink(
+        "fileLocks",
+        restApiLinks.fileLock().getAll(repository.getNamespace(), repository.getName()).asString()
+      );
     }
   }
 }

@@ -67,14 +67,18 @@ public class FileEnricher implements HalEnricher {
     if (RepositoryPermissions.push(repository).isPermitted()) {
       try (RepositoryService service = serviceFactory.create(repository)) {
         Optional<FileLock> fileLockStatus = service.getLockCommand().status(fileObject.getPath());
-        RestApiLinks restApiLinks = new RestApiLinks(scmPathInfoStore.get().get().getApiRestUri());
-        if (fileLockStatus.isPresent()) {
-          appender.appendLink("unlock", restApiLinks.fileLock().unlockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
-          appender.appendEmbedded("fileLock", mapper.map(repository, fileLockStatus.get()));
-        } else {
-          appender.appendLink("lock", restApiLinks.fileLock().lockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
-        }
+        appendLinks(appender, repository, fileObject, fileLockStatus);
       }
+    }
+  }
+
+  private void appendLinks(HalAppender appender, Repository repository, FileObject fileObject, Optional<FileLock> fileLockStatus) {
+    RestApiLinks restApiLinks = new RestApiLinks(scmPathInfoStore.get().get().getApiRestUri());
+    if (fileLockStatus.isPresent()) {
+      appender.appendLink("unlock", restApiLinks.fileLock().unlockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
+      appender.appendEmbedded("fileLock", mapper.map(repository, fileLockStatus.get()));
+    } else {
+      appender.appendLink("lock", restApiLinks.fileLock().lockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
     }
   }
 }

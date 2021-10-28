@@ -25,12 +25,9 @@ package com.cloudogu.filelock;
 
 import com.google.common.annotations.VisibleForTesting;
 import de.otto.edison.hal.Links;
-import org.apache.shiro.SecurityUtils;
-import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 import org.mapstruct.ObjectFactory;
 import sonia.scm.api.v2.resources.ScmPathInfoStore;
 import sonia.scm.repository.Repository;
@@ -43,7 +40,7 @@ import static de.otto.edison.hal.Link.link;
 import static de.otto.edison.hal.Links.linkingTo;
 
 @Mapper
-public abstract class FileLockMapper  {
+public abstract class FileLockMapper {
 
   @Inject
   private Provider<ScmPathInfoStore> scmPathInfoStoreProvider;
@@ -56,17 +53,18 @@ public abstract class FileLockMapper  {
   @Mapping(target = "attributes", ignore = true) // We do not map HAL attributes
   public abstract FileLockDto map(@Context Repository repository, FileLock fileLock);
 
-  @AfterMapping
-  void mapAdditionalFields(@MappingTarget FileLockDto target, FileLock fileLock) {
-    target.setWriteAccess(SecurityUtils.getSubject().getPrincipal().toString().equals(fileLock.getUserId()));
-  }
 
   @ObjectFactory
   FileLockDto createDto(@Context Repository repository, FileLock fileLock) {
     Links.Builder linksBuilder = linkingTo();
 
     RestApiLinks restApiLinks = new RestApiLinks(scmPathInfoStoreProvider.get().get().getApiRestUri());
-    linksBuilder.single(link("unlock", restApiLinks.fileLock().unlockFile(repository.getNamespace(), repository.getName(), fileLock.getPath()).asString()));
+    linksBuilder.single(
+      link(
+        "unlock",
+        restApiLinks.fileLock().unlockFile(repository.getNamespace(), repository.getName(), fileLock.getPath()).asString()
+      )
+    );
     return new FileLockDto(linksBuilder.build());
   }
 }
