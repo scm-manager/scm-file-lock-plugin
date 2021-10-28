@@ -32,8 +32,12 @@ import org.mapstruct.ObjectFactory;
 import sonia.scm.api.v2.resources.ScmPathInfoStore;
 import sonia.scm.repository.Repository;
 import sonia.scm.repository.api.FileLock;
+import sonia.scm.user.DisplayUser;
+import sonia.scm.user.User;
+import sonia.scm.user.UserDisplayManager;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 
 import static de.otto.edison.hal.Link.link;
@@ -44,15 +48,27 @@ public abstract class FileLockMapper {
 
   @Inject
   private Provider<ScmPathInfoStore> scmPathInfoStoreProvider;
+  @Inject
+  private UserDisplayManager userDisplayManager;
 
   @VisibleForTesting
   public void setScmPathInfoStoreProvider(Provider<ScmPathInfoStore> scmPathInfoStoreProvider) {
     this.scmPathInfoStoreProvider = scmPathInfoStoreProvider;
   }
 
+  @VisibleForTesting
+  public void setUserDisplayManager(UserDisplayManager userDisplayManager) {
+    this.userDisplayManager = userDisplayManager;
+  }
+
   @Mapping(target = "attributes", ignore = true) // We do not map HAL attributes
+  @Mapping(target = "username", source = "userId", qualifiedByName = "mapUser")
   public abstract FileLockDto map(@Context Repository repository, FileLock fileLock);
 
+  @Named("mapUser")
+  String mapUser(String userId) {
+    return userDisplayManager.get(userId).orElseGet(() -> DisplayUser.from(new User(userId, userId, null))).getDisplayName();
+  }
 
   @ObjectFactory
   FileLockDto createDto(@Context Repository repository, FileLock fileLock) {

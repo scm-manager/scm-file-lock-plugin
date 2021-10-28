@@ -35,7 +35,7 @@ type Props = {
 };
 
 export type FileLock = HalRepresentation & {
-  userId: string;
+  username: string;
   timestamp: Date;
   path: string;
   writeAccess: boolean;
@@ -65,7 +65,7 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
     return (
       <Tooltip
         message={t("scm-file-lock-plugin.lockIcon.tooltip", {
-          userId: fileLock.userId,
+          userId: fileLock.username,
           timestamp: formatter?.formatDistance()
         })}
         location="top"

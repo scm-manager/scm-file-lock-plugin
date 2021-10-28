@@ -39,7 +39,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class FileLockDto extends HalRepresentation {
-  private String userId;
+  private String username;
   private Instant timestamp;
   private String path;
 
