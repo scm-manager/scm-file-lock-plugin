@@ -1,0 +1,2 @@
+- type: added
+  description: Add lock/unlock actions ([#3](https://github.com/scm-manager/scm-file-lock-plugin/pull/3))
