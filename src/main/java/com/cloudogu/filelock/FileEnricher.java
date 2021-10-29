@@ -67,18 +67,29 @@ public class FileEnricher implements HalEnricher {
     if (RepositoryPermissions.push(repository).isPermitted()) {
       try (RepositoryService service = serviceFactory.create(repository)) {
         Optional<FileLock> fileLockStatus = service.getLockCommand().status(fileObject.getPath());
-        appendLinks(appender, repository, fileObject, fileLockStatus);
+        RestApiLinks restApiLinks = createRestApiLinks();
+
+        if (fileLockStatus.isPresent()) {
+          appendFileLock(appender, repository, fileObject, fileLockStatus, restApiLinks);
+        } else {
+          appendLockLink(appender, repository, fileObject, restApiLinks);
+        }
       }
     }
   }
 
-  private void appendLinks(HalAppender appender, Repository repository, FileObject fileObject, Optional<FileLock> fileLockStatus) {
-    RestApiLinks restApiLinks = new RestApiLinks(scmPathInfoStore.get().get().getApiRestUri());
-    if (fileLockStatus.isPresent()) {
-      appender.appendLink("unlock", restApiLinks.fileLock().unlockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
-      appender.appendEmbedded("fileLock", mapper.map(repository, fileLockStatus.get()));
-    } else {
-      appender.appendLink("lock", restApiLinks.fileLock().lockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
-    }
+  private void appendLockLink(HalAppender appender, Repository repository, FileObject fileObject, RestApiLinks restApiLinks) {
+    appender.appendLink("lock", restApiLinks.fileLock().lockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
   }
+
+  private void appendFileLock(HalAppender appender, Repository repository, FileObject fileObject, Optional<FileLock> fileLockStatus, RestApiLinks restApiLinks) {
+    appender.appendLink("unlock", restApiLinks.fileLock().unlockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
+    appender.appendEmbedded("fileLock", mapper.map(repository, fileLockStatus.get()));
+  }
+
+  private RestApiLinks createRestApiLinks() {
+    return new RestApiLinks(scmPathInfoStore.get().get().getApiRestUri());
+  }
+
+
 }

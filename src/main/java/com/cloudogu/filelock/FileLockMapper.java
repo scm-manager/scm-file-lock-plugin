@@ -25,9 +25,12 @@ package com.cloudogu.filelock;
 
 import com.google.common.annotations.VisibleForTesting;
 import de.otto.edison.hal.Links;
+import org.apache.shiro.SecurityUtils;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.ObjectFactory;
 import sonia.scm.api.v2.resources.ScmPathInfoStore;
 import sonia.scm.repository.Repository;
@@ -68,6 +71,12 @@ public abstract class FileLockMapper {
   @Named("mapUser")
   String mapUser(String userId) {
     return userDisplayManager.get(userId).orElseGet(() -> DisplayUser.from(new User(userId, userId, null))).getDisplayName();
+  }
+
+  @AfterMapping
+  void mapWriteAccess(@MappingTarget FileLockDto dto, FileLock fileLock) {
+    String username = SecurityUtils.getSubject().getPrincipal().toString();
+    dto.setWriteAccess(fileLock.getUserId().equals(username));
   }
 
   @ObjectFactory

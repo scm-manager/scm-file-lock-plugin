@@ -42,6 +42,7 @@ public class FileLockDto extends HalRepresentation {
   private String username;
   private Instant timestamp;
   private String path;
+  private boolean writeAccess;
 
   public FileLockDto(Links links) {
     super(links);

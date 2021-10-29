@@ -66,7 +66,7 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
       <Tooltip
         message={t("scm-file-lock-plugin.lockIcon.tooltip", {
           userId: fileLock.username,
-          timestamp: formatter?.formatDistance()
+          timestamp: formatter?.formatDistance() || ""
         })}
         location="top"
         className={type === "BUTTON" ? "pr-2" : ""}

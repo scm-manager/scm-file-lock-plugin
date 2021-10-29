@@ -60,6 +60,8 @@ import java.util.stream.Collectors;
 @GenerateLinkBuilder(className = "RestApiLinks")
 public class FileLockResource {
 
+  public static final String MEDIA_TYPE = VndMediaType.PREFIX + "file-lock" + VndMediaType.SUFFIX;
+
   private final RepositoryServiceFactory serviceFactory;
   private final FileLockMapper mapper;
 
@@ -96,10 +98,10 @@ public class FileLockResource {
   }
 
   @DELETE
-  @Path("{namespace}/{name}/unlock/{path}")
+  @Path("{namespace}/{name}/lock/{path}")
   @Operation(
     summary = "Removes file lock",
-    description = "Unlocks a single locked file.",
+    description = "Removes lock from a single locked file.",
     tags = "File Lock",
     operationId = "file_lock_unlock"
   )
@@ -123,7 +125,7 @@ public class FileLockResource {
 
   @GET
   @Path("{namespace}/{name}")
-  @Produces("application/json")
+  @Produces(MEDIA_TYPE)
   @Operation(
     summary = "Get all locked files",
     description = "Get all locked files for repository.",

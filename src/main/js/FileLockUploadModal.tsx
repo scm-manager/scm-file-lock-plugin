@@ -31,11 +31,11 @@ import { useTranslation } from "react-i18next";
 type Props = {
   repository: Repository;
   files: File[];
-  isValid: (valid: boolean) => void;
+  validateFiles: (valid: boolean) => void;
   path: string;
 };
 
-const FileLockUploadModal: FC<Props> = ({ repository, files, isValid, path }) => {
+const FileLockUploadModal: FC<Props> = ({ repository, files, validateFiles, path }) => {
   const { data, error } = useFileLocks(repository);
   const { unlockFiles, error: unlockError } = useUnlockFiles(repository);
   const [showModal, setShowModal] = useState(false);
@@ -44,10 +44,10 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, isValid, path }) =>
   useEffect(() => {
     if (data) {
       const valid = validate();
-      isValid(valid);
+      validateFiles(valid);
       setShowModal(!valid);
     }
-  }, [repository, files, data]);
+  }, [files, data]);
 
   const resolveFilePath = (file: File) => {
     if (path) {

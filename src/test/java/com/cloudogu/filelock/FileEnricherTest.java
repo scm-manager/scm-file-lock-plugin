@@ -105,7 +105,7 @@ class FileEnricherTest {
   @SubjectAware(permissions = "repository:push:id-1")
   void shouldEnrichWithPushPermission() {
     FileLock fileLock = new FileLock("src/test.md", "" ,"trillian", Instant.ofEpochMilli(10000));
-    FileLockDto dto = new FileLockDto("trillian", Instant.ofEpochMilli(10000), "myfile");
+    FileLockDto dto = new FileLockDto("trillian", Instant.ofEpochMilli(10000), "myfile", false);
     FileObject fileObject = mock(FileObject.class);
     String filepath = "myfile";
 
