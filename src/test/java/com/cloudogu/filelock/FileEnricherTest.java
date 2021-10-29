@@ -38,6 +38,7 @@ import sonia.scm.api.v2.resources.ScmPathInfoStore;
 import sonia.scm.repository.FileObject;
 import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryManager;
+import sonia.scm.repository.api.Command;
 import sonia.scm.repository.api.FileLock;
 import sonia.scm.repository.api.LockCommandBuilder;
 import sonia.scm.repository.api.RepositoryService;
@@ -101,6 +102,24 @@ class FileEnricherTest {
     verify(appender, never()).appendEmbedded(anyString(), any(FileLockDto.class));
   }
 
+
+  @Test
+  @SubjectAware(permissions = "repository:push:id-1")
+  void shouldNotEnrichIdLockCommandNotSupported() {
+    FileLock fileLock = new FileLock("src/test.md", "" ,"trillian", Instant.ofEpochMilli(10000));
+    FileObject fileObject = mock(FileObject.class);
+    String filepath = "myfile";
+
+    when(serviceFactory.create(repository)).thenReturn(service);
+    when(service.isSupported(Command.LOCK)).thenReturn(false);
+    when(lockCommandBuilder.status(filepath)).thenReturn(Optional.of(fileLock));
+
+    enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
+
+    verify(appender, never()).appendEmbedded(anyString(), any(FileLockDto.class));
+    verify(appender, never()).appendLink(anyString(), anyString());
+  }
+
   @Test
   @SubjectAware(permissions = "repository:push:id-1")
   void shouldEnrichWithPushPermission() {
@@ -112,13 +131,14 @@ class FileEnricherTest {
     when(fileObject.getPath()).thenReturn(filepath);
     when(serviceFactory.create(repository)).thenReturn(service);
     when(service.getLockCommand()).thenReturn(lockCommandBuilder);
+    when(service.isSupported(Command.LOCK)).thenReturn(true);
     when(lockCommandBuilder.status(filepath)).thenReturn(Optional.of(fileLock));
     when(mapper.map(repository, fileLock)).thenReturn(dto);
 
     enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
 
     verify(appender).appendEmbedded("fileLock", dto);
-    verify(appender).appendLink("unlock", "scm/api/v2/file-lock/hitchhiker/HeartOfGold/unlock/myfile");
+    verify(appender).appendLink("unlock", "scm/api/v2/file-lock/hitchhiker/HeartOfGold/lock/myfile");
   }
 
   @Test
@@ -129,6 +149,7 @@ class FileEnricherTest {
 
     when(fileObject.getPath()).thenReturn(filepath);
     when(serviceFactory.create(repository)).thenReturn(service);
+    when(service.isSupported(Command.LOCK)).thenReturn(true);
     when(service.getLockCommand()).thenReturn(lockCommandBuilder);
     when(lockCommandBuilder.status(filepath)).thenReturn(Optional.empty());
 

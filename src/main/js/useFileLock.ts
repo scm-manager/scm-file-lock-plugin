@@ -28,8 +28,14 @@ import { FileLock } from "./FileLockAction";
 
 export const useFileLock = (repository: Repository, file: File) => {
   const queryClient = useQueryClient();
-  const { mutate, isLoading, error } = useMutation<unknown, Error, Promise<Response>>(
-    (promise: Promise<Response>) => promise,
+  const { mutate, isLoading, error } = useMutation<unknown, Error, boolean>(
+    (lock: boolean) => {
+      if (lock) {
+        return apiClient.post((file._links.lock as Link).href);
+      } else {
+        return apiClient.delete((file._links.unlock as Link).href);
+      }
+    },
     {
       onSuccess: () => {
         return queryClient.invalidateQueries(["repository", repository.namespace, repository.name]);
@@ -37,8 +43,8 @@ export const useFileLock = (repository: Repository, file: File) => {
     }
   );
   return {
-    lock: file._links.lock ? () => mutate(apiClient.post((file._links.lock as Link).href)) : undefined,
-    unlock: file._links.unlock ? () => mutate(apiClient.delete((file._links.unlock as Link).href)) : undefined,
+    lock: file._links.lock ? () => mutate(true) : undefined,
+    unlock: file._links.unlock ? () => mutate(false) : undefined,
     isLoading,
     error
   };

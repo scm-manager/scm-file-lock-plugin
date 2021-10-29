@@ -34,6 +34,7 @@ import sonia.scm.repository.NamespaceAndName;
 import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryManager;
 import sonia.scm.repository.RepositoryPermissions;
+import sonia.scm.repository.api.Command;
 import sonia.scm.repository.api.FileLock;
 import sonia.scm.repository.api.RepositoryService;
 import sonia.scm.repository.api.RepositoryServiceFactory;
@@ -66,13 +67,15 @@ public class FileEnricher implements HalEnricher {
 
     if (RepositoryPermissions.push(repository).isPermitted()) {
       try (RepositoryService service = serviceFactory.create(repository)) {
-        Optional<FileLock> fileLockStatus = service.getLockCommand().status(fileObject.getPath());
-        RestApiLinks restApiLinks = createRestApiLinks();
+        if (service.isSupported(Command.LOCK)) {
+          Optional<FileLock> fileLockStatus = service.getLockCommand().status(fileObject.getPath());
+          RestApiLinks restApiLinks = createRestApiLinks();
 
-        if (fileLockStatus.isPresent()) {
-          appendFileLock(appender, repository, fileObject, fileLockStatus, restApiLinks);
-        } else {
-          appendLockLink(appender, repository, fileObject, restApiLinks);
+          if (fileLockStatus.isPresent()) {
+            appendFileLock(appender, repository, fileObject, fileLockStatus, restApiLinks);
+          } else {
+            appendLockLink(appender, repository, fileObject, restApiLinks);
+          }
         }
       }
     }
