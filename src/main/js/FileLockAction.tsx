@@ -55,9 +55,9 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
         className={type === "BUTTON" ? "pr-2" : ""}
       >
         {type === "ICON" ? (
-          <DarkHoverIcon name="lock-open" color="success" onClick={() => lock()} tabIndex={0} />
+          <DarkHoverIcon name="lock-open" color="success" onClick={lock} tabIndex={0} />
         ) : (
-          <Button icon="lock-open" loading={isLoading} action={() => lock()} />
+          <Button icon="lock-open" loading={isLoading} action={lock} />
         )}
       </Tooltip>
     );
@@ -72,9 +72,9 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
         className={type === "BUTTON" ? "pr-2" : ""}
       >
         {type === "ICON" ? (
-          <DarkHoverIcon name="lock" color="warning" onClick={() => unlock()} />
+          <DarkHoverIcon name="lock" color="warning" onClick={unlock} />
         ) : (
-          <Button icon="lock" color="warning" loading={isLoading} action={() => unlock()} />
+          <Button icon="lock" color="warning" loading={isLoading} action={unlock} />
         )}
       </Tooltip>
     );

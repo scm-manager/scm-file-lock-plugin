@@ -7,7 +7,7 @@ However, the lock is not protected and can be removed and reset by any user with
 
 ![Locked Files](assets/locked_files.png)
 
-The File Lock plugin works best in combination with the [Editor Plugin](https://scm-manager.org/plugins/scm-editor-plugin/).
+The File Lock plugin works best in combination with the [Editor Plugin](/plugins/scm-editor-plugin/).
 In the Editor Plugin files can be downloaded directly. If files are locked, this download action is marked yellow.
 If a file is not locked, it can optionally be locked during download.
 

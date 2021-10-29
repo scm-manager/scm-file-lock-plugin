@@ -7,7 +7,7 @@ Die Sperre ist allerdings nicht geschützt und kann von jedem Benutzer mit Schre
 
 ![Locked Files](assets/locked_files.png)
 
-Das File-Lock-Plugin funktioniert am besten in Kombination mit dem [Editor-Plugin](https://scm-manager.org/plugins/scm-editor-plugin/). 
+Das File-Lock-Plugin funktioniert am besten in Kombination mit dem [Editor-Plugin](/plugins/scm-editor-plugin/). 
 Im Editor-Plugin können Dateien direkt heruntergeladen werden. Sind Dateien gesperrt, wird diese Download-Aktion gelb markiert.
 Ist eine Datei nicht gesperrt, kann diese optional beim Herunterladen gesperrt werden.
 

@@ -95,7 +95,7 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, isValid, path }) =>
             <Button
               color="warning"
               label={t("scm-file-lock-plugin.uploadLockModal.unlockButton")}
-              action={() => unlockConflictingFiles()}
+              action={unlockConflictingFiles}
             />
             <Button label={t("scm-file-lock-plugin.uploadLockModal.cancelButton")} action={() => setShowModal(false)} />
           </ButtonGroup>

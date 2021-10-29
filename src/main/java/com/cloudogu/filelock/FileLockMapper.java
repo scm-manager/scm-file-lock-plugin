@@ -37,7 +37,7 @@ import sonia.scm.user.User;
 import sonia.scm.user.UserDisplayManager;
 
 import javax.inject.Inject;
-import javax.inject.Named;
+import org.mapstruct.Named;
 import javax.inject.Provider;
 
 import static de.otto.edison.hal.Link.link;
@@ -52,12 +52,12 @@ public abstract class FileLockMapper {
   private UserDisplayManager userDisplayManager;
 
   @VisibleForTesting
-  public void setScmPathInfoStoreProvider(Provider<ScmPathInfoStore> scmPathInfoStoreProvider) {
+  void setScmPathInfoStoreProvider(Provider<ScmPathInfoStore> scmPathInfoStoreProvider) {
     this.scmPathInfoStoreProvider = scmPathInfoStoreProvider;
   }
 
   @VisibleForTesting
-  public void setUserDisplayManager(UserDisplayManager userDisplayManager) {
+ void setUserDisplayManager(UserDisplayManager userDisplayManager) {
     this.userDisplayManager = userDisplayManager;
   }
 
