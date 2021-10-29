@@ -24,7 +24,7 @@
 
 import { binder } from "@scm-manager/ui-extensions";
 import { FileLockButton, FileLockIcon } from "./FileLockAction";
-import { FileLockDownloadButton, FileLockDownloadIcon } from "./FileLockDownloadAction";
+import {FileLockDownloadButton, FileLockDownloadIcon, FileLockLargeDownloadButton} from "./FileLockDownloadAction";
 import FileLockUploadModal from "./FileLockUploadModal";
 
 binder.bind("repos.sources.tree.row.right", FileLockIcon, { priority: 1000 });
@@ -32,3 +32,4 @@ binder.bind("repos.sources.content.actionbar", FileLockButton, { priority: 1000 
 binder.bind("repos.sources.content.actionbar.download", FileLockDownloadButton, { priority: 1000 });
 binder.bind("repos.sources.actionbar.download", FileLockDownloadIcon, { priority: 1000 });
 binder.bind("editorPlugin.file.upload.validation", FileLockUploadModal);
+binder.bind("repos.sources.content.downloadButton", FileLockLargeDownloadButton)

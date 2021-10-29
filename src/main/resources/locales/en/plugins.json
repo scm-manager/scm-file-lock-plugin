@@ -13,7 +13,8 @@
       "downloadButton": "Download without locking"
     },
     "downloadLock": {
-      "tooltip": "You may download the file but not commit any changes"
+      "tooltip": "You may download the file but not commit any changes",
+      "label": "Download"
     },
     "uploadLockModal": {
       "title": "Files are locked",

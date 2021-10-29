@@ -31,7 +31,7 @@ import styled from "styled-components";
 type Props = {
   repository: Repository;
   file: File;
-  type: "ICON" | "BUTTON";
+  type: "ICON" | "BUTTON" | "LARGE_BUTTON";
 };
 
 type ModalProps = {
@@ -94,11 +94,16 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
   if (lock) {
     return (
       <>
-        {type === "BUTTON" ? (
-          <Button icon="download" action={() => setShowModal(true)} />
-        ) : (
-          <DarkHoverIcon name="download" color="info" onClick={() => setShowModal(true)} />
-        )}
+        {type === "BUTTON" ? <Button icon="download" action={() => setShowModal(true)} /> : null}
+        {type === "LARGE_BUTTON" ? (
+          <Button
+            icon="download"
+            color="info"
+            label={t("scm-file-lock-plugin.downloadLock.label")}
+            action={() => setShowModal(true)}
+          />
+        ) : null}
+        {type === "ICON" ? <DarkHoverIcon name="download" color="info" onClick={() => setShowModal(true)} /> : null}
         {showModal && (
           <FileLockDownloadModal
             onClose={() => setShowModal(false)}
@@ -116,13 +121,18 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
         <>
           {type === "BUTTON" ? (
             <Button icon="download" action={() => downloadFile((file._links.self as Link).href)} />
-          ) : (
-            <DarkHoverIcon
-              name="download"
+          ) : null}
+          {type === "LARGE_BUTTON" ? (
+            <Button
+              icon="download"
               color="info"
-              onClick={() => downloadFile((file._links.self as Link).href)}
+              label={t("scm-file-lock-plugin.downloadLock.label")}
+              action={() => downloadFile((file._links.self as Link).href)}
             />
-          )}
+          ) : null}
+          {type === "ICON" ? (
+            <DarkHoverIcon name="download" color="info" onClick={() => downloadFile((file._links.self as Link).href)} />
+          ) : null}
         </>
       );
     } else {
@@ -130,13 +140,22 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
         <Tooltip message={t("scm-file-lock-plugin.downloadLock.tooltip")} location="top">
           {type === "BUTTON" ? (
             <Button icon="download" color="warning" action={() => downloadFile((file._links.self as Link).href)} />
-          ) : (
+          ) : null}
+          {type === "LARGE_BUTTON" ? (
+            <Button
+              icon="download"
+              color="warning"
+              label={t("scm-file-lock-plugin.downloadLock.label")}
+              action={() => downloadFile((file._links.self as Link).href)}
+            />
+          ) : null}
+          {type === "ICON" ? (
             <DarkHoverIcon
               name="download"
               color="warning"
               onClick={() => downloadFile((file._links.self as Link).href)}
             />
-          )}
+          ) : null}
         </Tooltip>
       );
     }
@@ -144,11 +163,20 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
 
   return (
     <>
+      {type === "LARGE_BUTTON" ? (
+        <Button
+          icon="download"
+          color="info"
+          label={t("scm-file-lock-plugin.downloadLock.label")}
+          action={() => downloadFile((file._links.self as Link).href)}
+        />
+      ) : null}
       {type === "BUTTON" ? (
         <Button icon="download" action={() => downloadFile((file._links.self as Link).href)} />
-      ) : (
+      ) : null}
+      {type === "ICON" ? (
         <DarkHoverIcon name="download" color="info" onClick={() => downloadFile((file._links.self as Link).href)} />
-      )}
+      ) : null}
     </>
   );
 };
@@ -164,4 +192,8 @@ export const FileLockDownloadButton: FC<FileLockComponentProps> = ({ repository,
 
 export const FileLockDownloadIcon: FC<FileLockComponentProps> = ({ repository, file }) => {
   return <FileLockDownloadAction repository={repository} file={file} type="ICON" />;
+};
+
+export const FileLockLargeDownloadButton: FC<FileLockComponentProps> = ({ repository, file }) => {
+  return <FileLockDownloadAction repository={repository} file={file} type="LARGE_BUTTON" />;
 };

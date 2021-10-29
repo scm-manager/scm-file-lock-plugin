@@ -13,7 +13,8 @@
       "downloadButton": "Ohne Sperre herunterladen"
     },
     "downloadLock": {
-      "tooltip": "Gesperrte Dateien können heruntergeladen aber nicht verändert werden"
+      "tooltip": "Gesperrte Dateien können heruntergeladen aber nicht verändert werden",
+      "label": "Download"
     },
     "uploadLockModal": {
       "title": "Dateien sind gesperrt",
