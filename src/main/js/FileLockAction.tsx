@@ -76,7 +76,7 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
         className={type === "BUTTON" ? "pr-2" : ""}
       >
         {type === "ICON" ? (
-          <DarkHoverIcon name="lock" color={resolveLockColor()} onClick={unlock} />
+          <DarkHoverIcon name="lock" color={resolveLockColor()} onClick={unlock} tabIndex={0} />
         ) : (
           <Button
             icon="lock"

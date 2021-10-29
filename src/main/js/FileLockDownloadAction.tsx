@@ -103,7 +103,9 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
             action={() => setShowModal(true)}
           />
         ) : null}
-        {type === "ICON" ? <DarkHoverIcon name="download" color="info" onClick={() => setShowModal(true)} /> : null}
+        {type === "ICON" ? (
+          <DarkHoverIcon name="download" color="info" onClick={() => setShowModal(true)} tabIndex={0} />
+        ) : null}
         {showModal && (
           <FileLockDownloadModal
             onClose={() => setShowModal(false)}
@@ -131,7 +133,12 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
             />
           ) : null}
           {type === "ICON" ? (
-            <DarkHoverIcon name="download" color="info" onClick={() => downloadFile((file._links.self as Link).href)} />
+            <DarkHoverIcon
+              name="download"
+              color="info"
+              onClick={() => downloadFile((file._links.self as Link).href)}
+              tabIndex={0}
+            />
           ) : null}
         </>
       );
@@ -154,6 +161,7 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
               name="download"
               color="warning"
               onClick={() => downloadFile((file._links.self as Link).href)}
+              tabIndex={0}
             />
           ) : null}
         </Tooltip>
@@ -175,7 +183,12 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
         <Button icon="download" action={() => downloadFile((file._links.self as Link).href)} />
       ) : null}
       {type === "ICON" ? (
-        <DarkHoverIcon name="download" color="info" onClick={() => downloadFile((file._links.self as Link).href)} />
+        <DarkHoverIcon
+          name="download"
+          color="info"
+          onClick={() => downloadFile((file._links.self as Link).href)}
+          tabIndex={0}
+        />
       ) : null}
     </>
   );
