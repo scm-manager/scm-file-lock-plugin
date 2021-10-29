@@ -32,6 +32,9 @@ import sonia.scm.api.v2.resources.ScmPathInfoStore;
 import sonia.scm.plugin.Extension;
 import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryPermissions;
+import sonia.scm.repository.api.Command;
+import sonia.scm.repository.api.RepositoryService;
+import sonia.scm.repository.api.RepositoryServiceFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -41,10 +44,12 @@ import javax.inject.Provider;
 public class RepositoryLinkEnricher implements HalEnricher {
 
   private final Provider<ScmPathInfoStore> scmPathInfoStoreProvider;
+  private final RepositoryServiceFactory serviceFactory;
 
   @Inject
-  public RepositoryLinkEnricher(Provider<ScmPathInfoStore> scmPathInfoStoreProvider) {
+  public RepositoryLinkEnricher(Provider<ScmPathInfoStore> scmPathInfoStoreProvider, RepositoryServiceFactory serviceFactory) {
     this.scmPathInfoStoreProvider = scmPathInfoStoreProvider;
+    this.serviceFactory = serviceFactory;
   }
 
   @Override
@@ -56,10 +61,14 @@ public class RepositoryLinkEnricher implements HalEnricher {
   private void appendLinks(HalAppender appender, Repository repository) {
     RestApiLinks restApiLinks = new RestApiLinks(scmPathInfoStoreProvider.get().get().getApiRestUri());
     if (RepositoryPermissions.push(repository).isPermitted()) {
-      appender.appendLink(
-        "fileLocks",
-        restApiLinks.fileLock().getAll(repository.getNamespace(), repository.getName()).asString()
-      );
+      try (RepositoryService service = serviceFactory.create(repository)) {
+        if (service.isSupported(Command.LOCK)) {
+          appender.appendLink(
+            "fileLocks",
+            restApiLinks.fileLock().getAll(repository.getNamespace(), repository.getName()).asString()
+          );
+        }
+      }
     }
   }
 }

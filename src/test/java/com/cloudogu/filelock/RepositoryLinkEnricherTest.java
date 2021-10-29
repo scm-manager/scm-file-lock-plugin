@@ -36,10 +36,11 @@ import sonia.scm.api.v2.resources.HalAppender;
 import sonia.scm.api.v2.resources.HalEnricherContext;
 import sonia.scm.api.v2.resources.ScmPathInfoStore;
 import sonia.scm.repository.Repository;
-import sonia.scm.repository.RepositoryTestData;
+import sonia.scm.repository.api.Command;
+import sonia.scm.repository.api.RepositoryService;
+import sonia.scm.repository.api.RepositoryServiceFactory;
 
 import javax.inject.Provider;
-
 import java.net.URI;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -55,6 +56,10 @@ class RepositoryLinkEnricherTest {
 
   @Mock
   private Provider<ScmPathInfoStore> scmPathInfoStoreProvider;
+  @Mock
+  private RepositoryServiceFactory serviceFactory;
+  @Mock
+  private RepositoryService service;
 
   @Mock
   private HalAppender appender;
@@ -79,6 +84,9 @@ class RepositoryLinkEnricherTest {
   @Test
   @SubjectAware(permissions = "repository:push:id-1")
   void shouldEnrichLink() {
+    when(serviceFactory.create(repository)).thenReturn(service);
+    when(service.isSupported(Command.LOCK)).thenReturn(true);
+
     enricher.enrich(HalEnricherContext.of(repository), appender);
 
     verify(appender).appendLink("fileLocks", "scm/api/v2/file-lock/hitchhiker/HeartOfGold");
