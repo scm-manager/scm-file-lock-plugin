@@ -47,6 +47,10 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
   const fileLock: FileLock = file._embedded?.fileLock;
   const formatter = useDateFormatter({ date: fileLock?.timestamp });
 
+  const resolveLockColor = () => {
+    return fileLock.writeAccess ? "success" : "warning"
+  }
+
   if (!fileLock && lock) {
     return (
       <Tooltip
@@ -72,9 +76,14 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
         className={type === "BUTTON" ? "pr-2" : ""}
       >
         {type === "ICON" ? (
-          <DarkHoverIcon name="lock" color="warning" onClick={unlock} />
+          <DarkHoverIcon name="lock" color={resolveLockColor()} onClick={unlock} />
         ) : (
-          <Button icon="lock" color="warning" loading={isLoading} action={unlock} />
+          <Button
+            icon="lock"
+            color={resolveLockColor()}
+            loading={isLoading}
+            action={unlock}
+          />
         )}
       </Tooltip>
     );

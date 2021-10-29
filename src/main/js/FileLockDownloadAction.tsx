@@ -111,19 +111,35 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
   }
 
   if (unlock) {
-    return (
-      <Tooltip message={t("scm-file-lock-plugin.downloadLock.tooltip")} location="top">
-        {type === "BUTTON" ? (
-          <Button icon="download" color="warning" action={() => downloadFile((file._links.self as Link).href)} />
-        ) : (
-          <DarkHoverIcon
-            name="download"
-            color="warning"
-            onClick={() => downloadFile((file._links.self as Link).href)}
-          />
-        )}
-      </Tooltip>
-    );
+    if (file._embedded?.fileLock?.writeAccess) {
+      return (
+        <>
+          {type === "BUTTON" ? (
+            <Button icon="download" action={() => downloadFile((file._links.self as Link).href)} />
+          ) : (
+            <DarkHoverIcon
+              name="download"
+              color="info"
+              onClick={() => downloadFile((file._links.self as Link).href)}
+            />
+          )}
+        </>
+      );
+    } else {
+      return (
+        <Tooltip message={t("scm-file-lock-plugin.downloadLock.tooltip")} location="top">
+          {type === "BUTTON" ? (
+            <Button icon="download" color="warning" action={() => downloadFile((file._links.self as Link).href)} />
+          ) : (
+            <DarkHoverIcon
+              name="download"
+              color="warning"
+              onClick={() => downloadFile((file._links.self as Link).href)}
+            />
+          )}
+        </Tooltip>
+      );
+    }
   }
 
   return (

@@ -59,7 +59,7 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, validateFiles, path
   const validate = () => {
     let valid = true;
     for (let file of files) {
-      if ((data?._embedded?.fileLocks as FileLock[]).some(lockedFile => lockedFile.path === resolveFilePath(file))) {
+      if ((data?._embedded?.fileLocks as FileLock[]).some(lockedFile => (lockedFile.path === resolveFilePath(file)) && !lockedFile.writeAccess)) {
         valid = false;
       }
     }
