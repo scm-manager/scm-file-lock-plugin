@@ -104,7 +104,13 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
           />
         ) : null}
         {type === "ICON" ? (
-          <DarkHoverIcon name="download" color="info" onClick={() => setShowModal(true)} tabIndex={0} />
+          <DarkHoverIcon
+            name="download"
+            color="info"
+            onClick={() => setShowModal(true)}
+            onEnter={() => setShowModal(true)}
+            tabIndex={0}
+          />
         ) : null}
         {showModal && (
           <FileLockDownloadModal
@@ -137,6 +143,7 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
               name="download"
               color="info"
               onClick={() => downloadFile((file._links.self as Link).href)}
+              onEnter={() => downloadFile((file._links.self as Link).href)}
               tabIndex={0}
             />
           ) : null}
@@ -161,6 +168,7 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
               name="download"
               color="warning"
               onClick={() => downloadFile((file._links.self as Link).href)}
+              onEnter={() => downloadFile((file._links.self as Link).href)}
               tabIndex={0}
             />
           ) : null}
@@ -187,6 +195,7 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
           name="download"
           color="info"
           onClick={() => downloadFile((file._links.self as Link).href)}
+          onEnter={() => downloadFile((file._links.self as Link).href)}
           tabIndex={0}
         />
       ) : null}
