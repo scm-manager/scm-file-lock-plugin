@@ -76,6 +76,6 @@ class FileLockMapperTest {
     assertThat(dto.getTimestamp()).isEqualTo(Instant.ofEpochMilli(10000));
     assertThat(dto.getUsername()).isEqualTo("Tricia McMillan");
     assertThat(dto.getPath()).isEqualTo(fileObject.getPath());
-    assertThat(dto.getLinks().getLinkBy("unlock").get().getHref()).isEqualTo("scm/api/v2/file-lock/hitchhiker/42Puzzle/unlock/src%2Ftest.md");
+    assertThat(dto.getLinks().getLinkBy("unlock").get().getHref()).isEqualTo("scm/api/v2/file-lock/hitchhiker/42Puzzle/lock/src%2Ftest.md");
   }
 }

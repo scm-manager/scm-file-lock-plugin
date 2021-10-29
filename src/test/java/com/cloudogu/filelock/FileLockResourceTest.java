@@ -117,7 +117,7 @@ class FileLockResourceTest {
   void shouldNotUnlockFileWithoutPushPermission() throws URISyntaxException {
     MockHttpRequest request = MockHttpRequest.delete(
       String.format(
-        "/v2/file-lock/%s/%s/unlock/%s",
+        "/v2/file-lock/%s/%s/lock/%s",
         repository.getNamespace(),
         repository.getName(),
         "src%2FmyFile"
@@ -137,7 +137,7 @@ class FileLockResourceTest {
     when(innerUnlockCommandBuilder.execute()).thenReturn(new UnlockCommandResult(true));
     MockHttpRequest request = MockHttpRequest.delete(
       String.format(
-        "/v2/file-lock/%s/%s/unlock/%s",
+        "/v2/file-lock/%s/%s/lock/%s",
         repository.getNamespace(),
         repository.getName(),
         "src%2FmyFile"
