@@ -62,7 +62,7 @@ public class RepositoryLinkEnricher implements HalEnricher {
     RestApiLinks restApiLinks = new RestApiLinks(scmPathInfoStoreProvider.get().get().getApiRestUri());
     if (RepositoryPermissions.push(repository).isPermitted()) {
       try (RepositoryService service = serviceFactory.create(repository)) {
-        if (service.isSupported(Command.LOCK)) {
+        if (service.isSupported(Command.FILE_LOCK)) {
           appender.appendLink(
             "fileLocks",
             restApiLinks.fileLock().getAll(repository.getNamespace(), repository.getName()).asString()

@@ -34,7 +34,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sonia.scm.repository.Repository;
-import sonia.scm.repository.api.LockCommandBuilder;
+import sonia.scm.repository.api.FileLockCommandBuilder;
 import sonia.scm.repository.api.LockCommandResult;
 import sonia.scm.repository.api.RepositoryService;
 import sonia.scm.repository.api.RepositoryServiceFactory;
@@ -60,7 +60,7 @@ class FileLockResourceTest {
   @Mock
   private RepositoryService service;
   @Mock
-  private LockCommandBuilder lockCommandBuilder;
+  private FileLockCommandBuilder lockCommandBuilder;
   @InjectMocks
   private FileLockResource resource;
 
@@ -96,7 +96,7 @@ class FileLockResourceTest {
   @Test
   @SubjectAware(permissions = "repository:push:id-1")
   void shouldLockFile() throws URISyntaxException {
-    LockCommandBuilder.InnerLockCommandBuilder innerLockCommandBuilder = mock(LockCommandBuilder.InnerLockCommandBuilder.class, RETURNS_DEEP_STUBS);
+    FileLockCommandBuilder.InnerLockCommandBuilder innerLockCommandBuilder = mock(FileLockCommandBuilder.InnerLockCommandBuilder.class, RETURNS_DEEP_STUBS);
     when(lockCommandBuilder.lock()).thenReturn(innerLockCommandBuilder);
     when(innerLockCommandBuilder.execute()).thenReturn(new LockCommandResult(true));
     MockHttpRequest request = MockHttpRequest.post(
@@ -132,7 +132,7 @@ class FileLockResourceTest {
   @Test
   @SubjectAware(permissions = "repository:push:id-1")
   void shouldUnlockFile() throws URISyntaxException {
-    LockCommandBuilder.InnerUnlockCommandBuilder innerUnlockCommandBuilder = mock(LockCommandBuilder.InnerUnlockCommandBuilder.class, RETURNS_DEEP_STUBS);
+    FileLockCommandBuilder.InnerUnlockCommandBuilder innerUnlockCommandBuilder = mock(FileLockCommandBuilder.InnerUnlockCommandBuilder.class, RETURNS_DEEP_STUBS);
     when(lockCommandBuilder.unlock()).thenReturn(innerUnlockCommandBuilder);
     when(innerUnlockCommandBuilder.execute()).thenReturn(new UnlockCommandResult(true));
     MockHttpRequest request = MockHttpRequest.delete(

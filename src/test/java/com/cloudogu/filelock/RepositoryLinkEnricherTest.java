@@ -85,7 +85,7 @@ class RepositoryLinkEnricherTest {
   @SubjectAware(permissions = "repository:push:id-1")
   void shouldEnrichLink() {
     when(serviceFactory.create(repository)).thenReturn(service);
-    when(service.isSupported(Command.LOCK)).thenReturn(true);
+    when(service.isSupported(Command.FILE_LOCK)).thenReturn(true);
 
     enricher.enrich(HalEnricherContext.of(repository), appender);
 

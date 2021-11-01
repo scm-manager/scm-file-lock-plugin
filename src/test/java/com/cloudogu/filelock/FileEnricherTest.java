@@ -40,7 +40,7 @@ import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryManager;
 import sonia.scm.repository.api.Command;
 import sonia.scm.repository.api.FileLock;
-import sonia.scm.repository.api.LockCommandBuilder;
+import sonia.scm.repository.api.FileLockCommandBuilder;
 import sonia.scm.repository.api.RepositoryService;
 import sonia.scm.repository.api.RepositoryServiceFactory;
 
@@ -74,7 +74,7 @@ class FileEnricherTest {
   @Mock
   private RepositoryService service;
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-  private LockCommandBuilder lockCommandBuilder;
+  private FileLockCommandBuilder lockCommandBuilder;
   @Mock
   private FileLockMapper mapper;
 
@@ -111,7 +111,7 @@ class FileEnricherTest {
     String filepath = "myfile";
 
     when(serviceFactory.create(repository)).thenReturn(service);
-    when(service.isSupported(Command.LOCK)).thenReturn(false);
+    when(service.isSupported(Command.FILE_LOCK)).thenReturn(false);
     when(lockCommandBuilder.status(filepath)).thenReturn(Optional.of(fileLock));
 
     enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
@@ -131,7 +131,7 @@ class FileEnricherTest {
     when(fileObject.getPath()).thenReturn(filepath);
     when(serviceFactory.create(repository)).thenReturn(service);
     when(service.getLockCommand()).thenReturn(lockCommandBuilder);
-    when(service.isSupported(Command.LOCK)).thenReturn(true);
+    when(service.isSupported(Command.FILE_LOCK)).thenReturn(true);
     when(lockCommandBuilder.status(filepath)).thenReturn(Optional.of(fileLock));
     when(mapper.map(repository, fileLock)).thenReturn(dto);
 
@@ -149,7 +149,7 @@ class FileEnricherTest {
 
     when(fileObject.getPath()).thenReturn(filepath);
     when(serviceFactory.create(repository)).thenReturn(service);
-    when(service.isSupported(Command.LOCK)).thenReturn(true);
+    when(service.isSupported(Command.FILE_LOCK)).thenReturn(true);
     when(service.getLockCommand()).thenReturn(lockCommandBuilder);
     when(lockCommandBuilder.status(filepath)).thenReturn(Optional.empty());
 
