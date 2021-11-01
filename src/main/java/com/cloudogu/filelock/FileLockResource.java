@@ -93,7 +93,7 @@ public class FileLockResource {
   public void lockFile(@PathParam("namespace") String namespace, @PathParam("name") String name, @PathParam("path") String path) {
     try (RepositoryService service = serviceFactory.create(new NamespaceAndName(namespace, name))) {
       RepositoryPermissions.push(service.getRepository()).check();
-      service.getLockCommand().lock().setFile(path).execute();
+      service.getLockCommand().lock().file(path).execute();
     }
   }
 
@@ -119,7 +119,7 @@ public class FileLockResource {
   public void unlockFile(@PathParam("namespace") String namespace, @PathParam("name") String name, @PathParam("path") String path) {
     try (RepositoryService service = serviceFactory.create(new NamespaceAndName(namespace, name))) {
       RepositoryPermissions.push(service.getRepository()).check();
-      service.getLockCommand().unlock().setFile(path).force(true).execute();
+      service.getLockCommand().unlock().file(path).force(true).execute();
     }
   }
 
