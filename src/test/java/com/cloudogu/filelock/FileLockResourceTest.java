@@ -44,6 +44,7 @@ import sonia.scm.web.RestDispatcher;
 import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -97,7 +98,7 @@ class FileLockResourceTest {
   @SubjectAware(permissions = "repository:push:id-1")
   void shouldLockFile() throws URISyntaxException {
     FileLockCommandBuilder.InnerLockCommandBuilder innerLockCommandBuilder = mock(FileLockCommandBuilder.InnerLockCommandBuilder.class, RETURNS_DEEP_STUBS);
-    when(lockCommandBuilder.lock()).thenReturn(innerLockCommandBuilder);
+    when(lockCommandBuilder.lock(any())).thenReturn(innerLockCommandBuilder);
     when(innerLockCommandBuilder.execute()).thenReturn(new LockCommandResult(true));
     MockHttpRequest request = MockHttpRequest.post(
       String.format(
@@ -133,7 +134,7 @@ class FileLockResourceTest {
   @SubjectAware(permissions = "repository:push:id-1")
   void shouldUnlockFile() throws URISyntaxException {
     FileLockCommandBuilder.InnerUnlockCommandBuilder innerUnlockCommandBuilder = mock(FileLockCommandBuilder.InnerUnlockCommandBuilder.class, RETURNS_DEEP_STUBS);
-    when(lockCommandBuilder.unlock()).thenReturn(innerUnlockCommandBuilder);
+    when(lockCommandBuilder.unlock(any())).thenReturn(innerUnlockCommandBuilder);
     when(innerUnlockCommandBuilder.execute()).thenReturn(new UnlockCommandResult(true));
     MockHttpRequest request = MockHttpRequest.delete(
       String.format(
