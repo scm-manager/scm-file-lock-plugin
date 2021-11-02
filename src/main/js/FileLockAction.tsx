@@ -38,7 +38,7 @@ export type FileLock = HalRepresentation & {
   username: string;
   timestamp: Date;
   path: string;
-  writeAccess: boolean;
+  owned: boolean;
 };
 
 const FileLockAction: FC<Props> = ({ repository, file, type }) => {
@@ -48,7 +48,7 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
   const formatter = useDateFormatter({ date: fileLock?.timestamp });
 
   const resolveLockColor = () => {
-    return fileLock.writeAccess ? "success" : "warning";
+    return fileLock.owned ? "success" : "warning";
   };
 
   if (!fileLock && lock) {
@@ -68,10 +68,14 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
   } else if (unlock) {
     return (
       <Tooltip
-        message={t("scm-file-lock-plugin.lockIcon.tooltip", {
-          userId: fileLock.username,
-          timestamp: formatter?.formatDistance()
-        })}
+        message={
+          fileLock.owned
+            ? t("scm-file-lock-plugin.lockIcon.tooltip.owned", { timestamp: formatter?.formatDistance() })
+            : t("scm-file-lock-plugin.lockIcon.tooltip.default", {
+                userId: fileLock.username,
+                timestamp: formatter?.formatDistance()
+              })
+        }
         location="top"
         className={type === "BUTTON" ? "pr-2" : ""}
       >

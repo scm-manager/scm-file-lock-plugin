@@ -1,7 +1,10 @@
 {
   "scm-file-lock-plugin": {
     "lockIcon": {
-      "tooltip": "Locked by {{userId}} {{timestamp}}"
+      "tooltip": {
+        "default": "Locked by {{userId}} {{timestamp}}. Click to unlock.",
+        "owned": "Locked by me {{timestamp}}. Click to unlock"
+      }
     },
     "unlockIcon": {
       "tooltip": "Lock this file"

@@ -76,7 +76,7 @@ public abstract class FileLockMapper {
   @AfterMapping
   void mapWriteAccess(@MappingTarget FileLockDto dto, FileLock fileLock) {
     String username = SecurityUtils.getSubject().getPrincipal().toString();
-    dto.setWriteAccess(fileLock.getUserId().equals(username));
+    dto.setOwned(fileLock.getUserId().equals(username));
   }
 
   @ObjectFactory

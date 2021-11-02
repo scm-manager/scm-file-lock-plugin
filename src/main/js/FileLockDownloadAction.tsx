@@ -110,6 +110,7 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
             onClick={() => setShowModal(true)}
             onEnter={() => setShowModal(true)}
             tabIndex={0}
+            className="is-clickable"
           />
         ) : null}
         {showModal && (
@@ -124,7 +125,7 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
   }
 
   if (unlock) {
-    if (file._embedded?.fileLock?.writeAccess) {
+    if (file._embedded?.fileLock?.owned) {
       return (
         <>
           {type === "BUTTON" ? (
@@ -145,6 +146,7 @@ const FileLockDownloadAction: FC<Props> = ({ repository, file, type }) => {
               onClick={() => downloadFile((file._links.self as Link).href)}
               onEnter={() => downloadFile((file._links.self as Link).href)}
               tabIndex={0}
+              className="is-clickable"
             />
           ) : null}
         </>

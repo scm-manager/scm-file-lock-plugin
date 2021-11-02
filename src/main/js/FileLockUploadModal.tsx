@@ -59,7 +59,11 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, validateFiles, path
   const validate = () => {
     let valid = true;
     for (let file of files) {
-      if ((data?._embedded?.fileLocks as FileLock[]).some(lockedFile => (lockedFile.path === resolveFilePath(file)) && !lockedFile.writeAccess)) {
+      if (
+        (data?._embedded?.fileLocks as FileLock[]).some(
+          lockedFile => lockedFile.path === resolveFilePath(file) && !lockedFile.owned
+        )
+      ) {
         valid = false;
       }
     }
@@ -69,9 +73,11 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, validateFiles, path
   const unlockConflictingFiles = () => {
     const conflictingLocks: FileLock[] = [];
     for (let file of files) {
-      for (let lock of data?._embedded?.fileLocks as FileLock[]) {
-        if (lock.path === resolveFilePath(file)) {
-          conflictingLocks.push(lock);
+      if (data?._embedded?.fileLocks) {
+        for (let lock of data._embedded.fileLocks as FileLock[]) {
+          if (lock.path === resolveFilePath(file)) {
+            conflictingLocks.push(lock);
+          }
         }
       }
     }
