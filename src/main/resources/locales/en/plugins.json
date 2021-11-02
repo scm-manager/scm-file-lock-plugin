@@ -1,5 +1,29 @@
 {
   "scm-file-lock-plugin": {
-
+    "lockIcon": {
+      "tooltip": {
+        "default": "Locked by {{userId}} {{timestamp}}. Click to unlock.",
+        "owned": "Locked by me {{timestamp}}. Click to unlock"
+      }
+    },
+    "unlockIcon": {
+      "tooltip": "Lock this file"
+    },
+    "downloadModal": {
+      "title": "Lock file?",
+      "description": "You may lock this file to prevent other users from changing it until you commit your changes. If you do not lock the file you may be unable to commit changes to this file.",
+      "lockDownloadButton": "Lock and download",
+      "downloadButton": "Download without locking"
+    },
+    "downloadLock": {
+      "tooltip": "You may download the file but not commit any changes",
+      "label": "Download"
+    },
+    "uploadLockModal": {
+      "title": "Files are locked",
+      "description": "The files you are trying to upload are locked. You can unlock all conflicting files and upload afterwards.",
+      "unlockButton": "Unlock conflicting files",
+      "cancelButton": "Cancel"
+    }
   }
 }

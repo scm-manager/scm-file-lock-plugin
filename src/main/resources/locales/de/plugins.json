@@ -1,5 +1,29 @@
 {
   "scm-file-lock-plugin": {
-
+    "lockIcon": {
+      "tooltip": {
+        "default": "Gesperrt von {{userId}} {{timestamp}}. Zum Entsperren klicken.",
+        "owned": "Gesperrt von mir {{timestamp}}. Zum Entsperren klicken."
+      }
+    },
+    "unlockIcon": {
+      "tooltip": "Datei sperren"
+    },
+    "downloadModal": {
+      "title": "Datei sperren?",
+      "description": "Gesperrte Dateien können nicht von anderen Benutzern geändert werden. Die Sperre kann von jedem Nutzer mit Schreibrechten auf dieses Repository entfernt werden.",
+      "lockDownloadButton": "Sperren und herunterladen",
+      "downloadButton": "Ohne Sperre herunterladen"
+    },
+    "downloadLock": {
+      "tooltip": "Gesperrte Dateien können heruntergeladen aber nicht verändert werden",
+      "label": "Download"
+    },
+    "uploadLockModal": {
+      "title": "Dateien sind gesperrt",
+      "description": "Die ausgewählten Dateien sind gesperrt und können nicht überschrieben werden. Diese Dateien können entsperrt und anschließend hochgeladen werden.",
+      "unlockButton": "Dateien entsperren",
+      "cancelButton": "Abbrechen"
+    }
   }
 }
