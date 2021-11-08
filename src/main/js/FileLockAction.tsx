@@ -21,9 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { File, HalRepresentation, Repository } from "@scm-manager/ui-types";
-import { Button, Tooltip, useDateFormatter } from "@scm-manager/ui-components";
+import { Button, ButtonGroup, Modal, Tooltip, useDateFormatter } from "@scm-manager/ui-components";
 import { useTranslation } from "react-i18next";
 import { useFileLock } from "./useFileLock";
 import { DarkHoverIcon } from "./FileLockDownloadAction";
@@ -39,6 +39,32 @@ export type FileLock = HalRepresentation & {
   timestamp: Date;
   path: string;
   owned: boolean;
+  filename?: string;
+};
+
+type ModalProps = {
+  fileLock: FileLock;
+  unlock: () => void;
+  setShowModal: (show: boolean) => void;
+};
+
+const UnlockModal: FC<ModalProps> = ({ fileLock, setShowModal, unlock }) => {
+  const [t] = useTranslation("plugins");
+  return (
+    <Modal
+      active={true}
+      closeFunction={() => setShowModal(false)}
+      headColor="warning"
+      title={t("scm-file-lock-plugin.unlockModal.title", { username: fileLock.username })}
+      body={t("scm-file-lock-plugin.unlockModal.description", { username: fileLock.username })}
+      footer={
+        <ButtonGroup>
+          <Button color="warning" label={t("scm-file-lock-plugin.unlockModal.unlockButton")} action={unlock} />
+          <Button label={t("scm-file-lock-plugin.unlockModal.cancelButton")} action={() => setShowModal(false)} />
+        </ButtonGroup>
+      }
+    />
+  );
 };
 
 const FileLockAction: FC<Props> = ({ repository, file, type }) => {
@@ -46,9 +72,20 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
   const { isLoading, lock, unlock } = useFileLock(repository, file);
   const fileLock: FileLock = file._embedded?.fileLock;
   const formatter = useDateFormatter({ date: fileLock?.timestamp });
+  const [showUnlockModal, setShowUnlockModal] = useState(false);
 
   const resolveLockColor = () => {
     return fileLock.owned ? "success" : "warning";
+  };
+
+  const resolveUnlockAction = () => {
+    if (unlock) {
+      if (fileLock.owned) {
+        unlock();
+      } else {
+        setShowUnlockModal(true);
+      }
+    }
   };
 
   if (!fileLock && lock) {
@@ -80,10 +117,17 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
         className={type === "BUTTON" ? "pr-2" : ""}
       >
         {type === "ICON" ? (
-          <DarkHoverIcon name="lock" color={resolveLockColor()} onClick={unlock} tabIndex={0} onEnter={unlock} />
+          <DarkHoverIcon
+            name="lock"
+            color={resolveLockColor()}
+            onClick={resolveUnlockAction}
+            tabIndex={0}
+            onEnter={resolveUnlockAction}
+          />
         ) : (
-          <Button icon="lock" color={resolveLockColor()} loading={isLoading} action={unlock} />
+          <Button icon="lock" color={resolveLockColor()} loading={isLoading} action={resolveUnlockAction} />
         )}
+        {showUnlockModal ? <UnlockModal fileLock={fileLock} unlock={unlock} setShowModal={setShowUnlockModal} /> : null}
       </Tooltip>
     );
   }

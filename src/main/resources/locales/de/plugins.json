@@ -23,7 +23,18 @@
       "title": "Dateien sind gesperrt",
       "description": "Die ausgewählten Dateien sind gesperrt und können nicht überschrieben werden. Diese Dateien können entsperrt und anschließend hochgeladen werden.",
       "unlockButton": "Dateien entsperren",
-      "cancelButton": "Abbrechen"
+      "cancelButton": "Abbrechen",
+      "column": {
+        "file": "Datei",
+        "user": "Gesperrt von",
+        "date": "Gesperrt seit"
+      }
+    },
+    "unlockModal": {
+      "title": "Dateisperre von \"{{username}}\"",
+      "description": "Diese Dateisperre kann selbstständig entfernt werden, sollte aber mit \"{{username}}\" abgestimmt werden.",
+      "cancelButton": "Abbrechen",
+      "unlockButton": "Datei entsperren"
     }
   }
 }

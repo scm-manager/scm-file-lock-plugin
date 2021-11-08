@@ -23,7 +23,18 @@
       "title": "Files are locked",
       "description": "The files you are trying to upload are locked. You can unlock all conflicting files and upload afterwards.",
       "unlockButton": "Unlock conflicting files",
-      "cancelButton": "Cancel"
+      "cancelButton": "Cancel",
+      "column": {
+        "file": "File",
+        "user": "Locked by",
+        "date": "Locked since"
+      }
+    },
+    "unlockModal": {
+      "title": "File locked by \"{{username}}\"",
+      "description": "You are free to unlock this file by yourself, but you should ask the user \"{{username}}\" first.",
+      "cancelButton": "Cancel",
+      "unlockButton": "Unlock file"
     }
   }
 }
