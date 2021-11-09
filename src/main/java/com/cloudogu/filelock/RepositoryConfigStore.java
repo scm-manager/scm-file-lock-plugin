@@ -21,23 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.cloudogu.filelock;
 
-import { binder } from "@scm-manager/ui-extensions";
-import { FileLockButton, FileLockIcon } from "./FileLockAction";
-import { FileLockDownloadButton, FileLockDownloadIcon, FileLockLargeDownloadButton } from "./FileLockDownloadAction";
-import FileLockUploadModal from "./FileLockUploadModal";
-import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import RepoConfig from "./config/RepoConfig";
+import sonia.scm.repository.Repository;
+import sonia.scm.store.ConfigurationStore;
+import sonia.scm.store.ConfigurationStoreFactory;
 
-binder.bind("repos.sources.tree.row.right", FileLockIcon, { priority: 1000 });
-binder.bind("repos.sources.content.actionbar", FileLockButton, { priority: 1000 });
-binder.bind("repos.sources.content.actionbar.download", FileLockDownloadButton, { priority: 1000 });
-binder.bind("repos.sources.actionbar.download", FileLockDownloadIcon, { priority: 1000 });
-binder.bind("editorPlugin.file.upload.validation", FileLockUploadModal);
-binder.bind("repos.sources.content.downloadButton", FileLockLargeDownloadButton);
-cfgBinder.bindRepositorySetting(
-  "/filelock-config",
-  "scm-file-lock-plugin.navLink.config",
-  "fileLockConfig",
-  RepoConfig
-);
+import javax.inject.Inject;
+
+public class RepositoryConfigStore {
+
+  private static final String STORE_NAME = "lock-config";
+
+  private final ConfigurationStoreFactory configurationStoreFactory;
+
+  @Inject
+  public RepositoryConfigStore(ConfigurationStoreFactory configurationStoreFactory) {
+    this.configurationStoreFactory = configurationStoreFactory;
+  }
+
+  public RepositoryConfig getConfig(Repository repository) {
+    return createStore(repository).getOptional().orElse(new RepositoryConfig());
+  }
+
+  public void updateConfig(Repository repository, RepositoryConfig config) {
+    PermissionCheck.checkConfigure(repository);
+    createStore(repository).set(config);
+  }
+
+  private ConfigurationStore<RepositoryConfig> createStore(Repository repository) {
+    return configurationStoreFactory.withType(RepositoryConfig.class).withName(STORE_NAME).forRepository(repository).build();
+  }
+}

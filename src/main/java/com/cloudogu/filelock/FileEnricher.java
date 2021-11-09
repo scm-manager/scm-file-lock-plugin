@@ -51,13 +51,15 @@ public class FileEnricher implements HalEnricher {
   private final RepositoryServiceFactory serviceFactory;
   private final FileLockMapper mapper;
   private final RepositoryManager repositoryManager;
+  private final RepositoryConfigStore configStore;
 
   @Inject
-  public FileEnricher(Provider<ScmPathInfoStore> scmPathInfoStore, RepositoryServiceFactory serviceFactory, FileLockMapper mapper, RepositoryManager repositoryManager) {
+  public FileEnricher(Provider<ScmPathInfoStore> scmPathInfoStore, RepositoryServiceFactory serviceFactory, FileLockMapper mapper, RepositoryManager repositoryManager, RepositoryConfigStore configStore) {
     this.scmPathInfoStore = scmPathInfoStore;
     this.serviceFactory = serviceFactory;
     this.mapper = mapper;
     this.repositoryManager = repositoryManager;
+    this.configStore = configStore;
   }
 
   @Override
@@ -65,7 +67,7 @@ public class FileEnricher implements HalEnricher {
     Repository repository = repositoryManager.get(context.oneRequireByType(NamespaceAndName.class));
     FileObject fileObject = context.oneRequireByType(FileObject.class);
 
-    if (RepositoryPermissions.push(repository).isPermitted()) {
+    if (shouldAppendLinks(repository)) {
       try (RepositoryService service = serviceFactory.create(repository)) {
         if (service.isSupported(Command.FILE_LOCK)) {
           Optional<FileLock> fileLockStatus = service.getLockCommand().status(fileObject.getPath());
@@ -81,6 +83,11 @@ public class FileEnricher implements HalEnricher {
     }
   }
 
+  private boolean shouldAppendLinks(Repository repository) {
+    return RepositoryPermissions.push(repository).isPermitted()
+      && configStore.getConfig(repository).isEnabled();
+  }
+
   private void appendLockLink(HalAppender appender, Repository repository, FileObject fileObject, RestApiLinks restApiLinks) {
     appender.appendLink("lock", restApiLinks.fileLock().lockFile(repository.getNamespace(), repository.getName(), fileObject.getPath()).asString());
   }
@@ -93,6 +100,4 @@ public class FileEnricher implements HalEnricher {
   private RestApiLinks createRestApiLinks() {
     return new RestApiLinks(scmPathInfoStore.get().get().getApiRestUri());
   }
-
-
 }

@@ -21,23 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import { useMutation, useQueryClient, useQuery } from "react-query";
+import { apiClient } from "@scm-manager/ui-components";
+import { HalRepresentation, Link } from "@scm-manager/ui-types";
 
-import { binder } from "@scm-manager/ui-extensions";
-import { FileLockButton, FileLockIcon } from "./FileLockAction";
-import { FileLockDownloadButton, FileLockDownloadIcon, FileLockLargeDownloadButton } from "./FileLockDownloadAction";
-import FileLockUploadModal from "./FileLockUploadModal";
-import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import RepoConfig from "./config/RepoConfig";
+export type FileLockConfig = HalRepresentation & {
+  enabled: boolean;
+};
 
-binder.bind("repos.sources.tree.row.right", FileLockIcon, { priority: 1000 });
-binder.bind("repos.sources.content.actionbar", FileLockButton, { priority: 1000 });
-binder.bind("repos.sources.content.actionbar.download", FileLockDownloadButton, { priority: 1000 });
-binder.bind("repos.sources.actionbar.download", FileLockDownloadIcon, { priority: 1000 });
-binder.bind("editorPlugin.file.upload.validation", FileLockUploadModal);
-binder.bind("repos.sources.content.downloadButton", FileLockLargeDownloadButton);
-cfgBinder.bindRepositorySetting(
-  "/filelock-config",
-  "scm-file-lock-plugin.navLink.config",
-  "fileLockConfig",
-  RepoConfig
-);
+export const useFileLockConfig = (link: string) => {
+  const { error, isLoading, data } = useQuery<FileLockConfig, Error>("fileLockConfig", () =>
+    apiClient.get(link).then(res => res.json())
+  );
+
+  return {
+    error,
+    isLoading,
+    data
+  };
+};
+
+export const useUpdateFileLockConfig = () => {
+  const queryClient = useQueryClient();
+  const { mutate, isLoading, error } = useMutation<unknown, Error, FileLockConfig>(
+    (config: FileLockConfig) => {
+      return apiClient.put(
+        (config._links.update as Link).href,
+        config,
+        "application/vnd.scmm-file-lock-config+json;v=2"
+      );
+    },
+    {
+      onSuccess: () => {
+        return queryClient.invalidateQueries(["fileLockConfig"]);
+      }
+    }
+  );
+  return {
+    update: (config: FileLockConfig) => {
+      mutate(config);
+    },
+    isLoading,
+    error
+  };
+};

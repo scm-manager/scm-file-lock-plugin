@@ -21,23 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.cloudogu.filelock;
 
-import { binder } from "@scm-manager/ui-extensions";
-import { FileLockButton, FileLockIcon } from "./FileLockAction";
-import { FileLockDownloadButton, FileLockDownloadIcon, FileLockLargeDownloadButton } from "./FileLockDownloadAction";
-import FileLockUploadModal from "./FileLockUploadModal";
-import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import RepoConfig from "./config/RepoConfig";
+import com.cloudogu.conveyor.GenerateDto;
+import com.cloudogu.conveyor.Include;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-binder.bind("repos.sources.tree.row.right", FileLockIcon, { priority: 1000 });
-binder.bind("repos.sources.content.actionbar", FileLockButton, { priority: 1000 });
-binder.bind("repos.sources.content.actionbar.download", FileLockDownloadButton, { priority: 1000 });
-binder.bind("repos.sources.actionbar.download", FileLockDownloadIcon, { priority: 1000 });
-binder.bind("editorPlugin.file.upload.validation", FileLockUploadModal);
-binder.bind("repos.sources.content.downloadButton", FileLockLargeDownloadButton);
-cfgBinder.bindRepositorySetting(
-  "/filelock-config",
-  "scm-file-lock-plugin.navLink.config",
-  "fileLockConfig",
-  RepoConfig
-);
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@Getter
+@Setter
+@NoArgsConstructor
+@GenerateDto
+public class RepositoryConfig {
+  @Include
+  private boolean enabled = true;
+}

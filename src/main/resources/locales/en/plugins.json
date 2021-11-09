@@ -35,6 +35,36 @@
       "description": "You are free to unlock this file by yourself, but you should ask the user \"{{username}}\" first.",
       "cancelButton": "Cancel",
       "unlockButton": "Unlock file"
+    },
+    "config": {
+      "subtitle": "File lock configuration",
+      "enabled": {
+        "label": "Show/Modify file locks via UI",
+        "helpText": "File locks can be seen and managed via UI. Disabling this config does not prevent file locks via the native commands."
+      },
+      "notification": "Configuration changed successfully!",
+      "submitButton": "Submit"
+    },
+    "navLink": {
+      "config": "File lock"
+    }
+  },
+  "permissions": {
+    "repository": {
+      "configureFileLock": {
+        "*": {
+          "displayName": "Modify repository specific file lock configuration",
+          "description": "May modify the repository specific file lock configuration for all repositories"
+        }
+      }
+    }
+  },
+  "verbs": {
+    "repository": {
+      "configureFileLock": {
+        "displayName": "configure file lock config",
+        "description": "May modify the repository specific file lock configurations"
+      }
     }
   }
 }

@@ -35,6 +35,36 @@
       "description": "Diese Dateisperre kann selbstständig entfernt werden, sollte aber mit \"{{username}}\" abgestimmt werden.",
       "cancelButton": "Abbrechen",
       "unlockButton": "Datei entsperren"
+    },
+    "config": {
+      "subtitle": "Dateisperren konfigurieren",
+      "enabled": {
+        "label": "Dateisperren über Oberfläche anzeigen/bearbeiten",
+        "helpText": "Die Dateisperren werden in der Oberfläche angezeigt und können direkt verändert werden. Das Deaktivieren dieser Funktion verhindert nicht das Setzen von Dateisperren über die nativen Kommandos."
+      },
+      "notification": "Einstellungen wurden erfolgreich geändert!",
+      "submitButton": "Speichern"
+    },
+    "navLink": {
+      "config": "Dateisperre"
+    }
+  },
+  "permissions": {
+    "repository": {
+      "configureFileLock": {
+        "*": {
+          "displayName": "Repository-spezifische Dateisperren Konfiguration ändern",
+          "description": "Darf die repository-spezifischen Dateisperren Konfiguration verändern"
+        }
+      }
+    }
+  },
+  "verbs": {
+    "repository": {
+      "configureFileLock": {
+        "displayName": "Dateisperren Konfiguration ändern",
+        "description": "Darf die Dateisperren Konfiguration verändern"
+      }
     }
   }
 }

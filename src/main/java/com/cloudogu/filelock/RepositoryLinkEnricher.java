@@ -45,11 +45,13 @@ public class RepositoryLinkEnricher implements HalEnricher {
 
   private final Provider<ScmPathInfoStore> scmPathInfoStoreProvider;
   private final RepositoryServiceFactory serviceFactory;
+  private final RepositoryConfigStore configStore;
 
   @Inject
-  public RepositoryLinkEnricher(Provider<ScmPathInfoStore> scmPathInfoStoreProvider, RepositoryServiceFactory serviceFactory) {
+  public RepositoryLinkEnricher(Provider<ScmPathInfoStore> scmPathInfoStoreProvider, RepositoryServiceFactory serviceFactory, RepositoryConfigStore configStore) {
     this.scmPathInfoStoreProvider = scmPathInfoStoreProvider;
     this.serviceFactory = serviceFactory;
+    this.configStore = configStore;
   }
 
   @Override
@@ -60,15 +62,27 @@ public class RepositoryLinkEnricher implements HalEnricher {
 
   private void appendLinks(HalAppender appender, Repository repository) {
     RestApiLinks restApiLinks = new RestApiLinks(scmPathInfoStoreProvider.get().get().getApiRestUri());
-    if (RepositoryPermissions.push(repository).isPermitted()) {
-      try (RepositoryService service = serviceFactory.create(repository)) {
-        if (service.isSupported(Command.FILE_LOCK)) {
+
+    try (RepositoryService service = serviceFactory.create(repository)) {
+      if (service.isSupported(Command.FILE_LOCK)) {
+        if (shouldAppendLinks(repository)) {
           appender.appendLink(
             "fileLocks",
             restApiLinks.fileLock().getAll(repository.getNamespace(), repository.getName()).asString()
           );
         }
+        if (PermissionCheck.mayConfigure(repository)) {
+          appender.appendLink(
+            "fileLockConfig",
+            restApiLinks.fileLockConfig().getRepositoryConfig(repository.getNamespace(), repository.getName()).asString()
+          );
+        }
       }
     }
+  }
+
+  private boolean shouldAppendLinks(Repository repository) {
+    return RepositoryPermissions.push(repository).isPermitted()
+      && configStore.getConfig(repository).isEnabled();
   }
 }
