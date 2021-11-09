@@ -69,11 +69,6 @@ class RepositoryConfigStoreTest {
   }
 
   @Test
-  void shouldNotGetConfigWithoutPermission() {
-    assertThrows(AuthorizationException.class, () -> store.getConfig(REPOSITORY));
-  }
-
-  @Test
   void shouldNotUpdateConfigWithoutPermission() {
     RepositoryConfig repositoryConfig = new RepositoryConfig();
     assertThrows(AuthorizationException.class, () -> store.updateConfig(REPOSITORY, repositoryConfig));
