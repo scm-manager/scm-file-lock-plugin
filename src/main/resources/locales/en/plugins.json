@@ -32,7 +32,7 @@
     },
     "unlockModal": {
       "title": "File locked by \"{{username}}\"",
-      "description": "You are free to unlock this file by yourself, but you should ask the user \"{{username}}\" first.",
+      "description": "You may unlock this file by yourself. But consider to ask the user \"{{username}}\" first.",
       "cancelButton": "Cancel",
       "unlockButton": "Unlock file"
     },

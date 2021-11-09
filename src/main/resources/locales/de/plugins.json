@@ -32,7 +32,7 @@
     },
     "unlockModal": {
       "title": "Dateisperre von \"{{username}}\"",
-      "description": "Diese Dateisperre kann selbstständig entfernt werden, sollte aber mit \"{{username}}\" abgestimmt werden.",
+      "description": "Sie können diese Dateisperre entfernen. Sie sollten dies jedoch vorher mit \"{{username}}\" abstimmen.",
       "cancelButton": "Abbrechen",
       "unlockButton": "Datei entsperren"
     },
