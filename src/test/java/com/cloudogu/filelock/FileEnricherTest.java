@@ -116,41 +116,46 @@ class FileEnricherTest {
       verify(appender, never()).appendLink(anyString(), anyString());
     }
 
-    @Test
-    void shouldEnrichWithPushPermission() {
-      FileLock fileLock = new FileLock("src/test.md", "", "trillian", Instant.ofEpochMilli(10000));
-      FileLockDto dto = new FileLockDto("trillian", Instant.ofEpochMilli(10000), "myfile", false);
-      FileObject fileObject = mock(FileObject.class);
-      String filepath = "myfile";
+    @Nested
+    class WithLockCommandSupport {
 
-      when(fileObject.getPath()).thenReturn(filepath);
-      when(serviceFactory.create(repository)).thenReturn(service);
-      when(service.getLockCommand()).thenReturn(lockCommandBuilder);
-      when(service.isSupported(Command.FILE_LOCK)).thenReturn(true);
-      when(lockCommandBuilder.status(filepath)).thenReturn(Optional.of(fileLock));
-      when(mapper.map(repository, fileLock)).thenReturn(dto);
+      @BeforeEach
+      void mockLockCommand() {
+        when(serviceFactory.create(repository)).thenReturn(service);
+        when(service.getLockCommand()).thenReturn(lockCommandBuilder);
+        when(service.isSupported(Command.FILE_LOCK)).thenReturn(true);
+      }
 
-      enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
+      @Test
+      void shouldEnrichWithPushPermission() {
+        FileLock fileLock = new FileLock("src/test.md", "", "trillian", Instant.ofEpochMilli(10000));
+        FileLockDto dto = new FileLockDto("trillian", Instant.ofEpochMilli(10000), "myfile", false);
+        FileObject fileObject = mock(FileObject.class);
+        String filepath = "myfile";
 
-      verify(appender).appendEmbedded("fileLock", dto);
-      verify(appender).appendLink("unlock", "scm/api/v2/file-lock/hitchhiker/HeartOfGold/lock/myfile");
-    }
+        when(fileObject.getPath()).thenReturn(filepath);
+        when(lockCommandBuilder.status(filepath)).thenReturn(Optional.of(fileLock));
+        when(mapper.map(repository, fileLock)).thenReturn(dto);
 
-    @Test
-    void shouldOnlyEnrichLockLink() {
-      FileObject fileObject = mock(FileObject.class);
-      String filepath = "src/myfile";
+        enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
 
-      when(fileObject.getPath()).thenReturn(filepath);
-      when(serviceFactory.create(repository)).thenReturn(service);
-      when(service.isSupported(Command.FILE_LOCK)).thenReturn(true);
-      when(service.getLockCommand()).thenReturn(lockCommandBuilder);
-      when(lockCommandBuilder.status(filepath)).thenReturn(Optional.empty());
+        verify(appender).appendEmbedded("fileLock", dto);
+        verify(appender).appendLink("unlock", "scm/api/v2/file-lock/hitchhiker/HeartOfGold/lock/myfile");
+      }
 
-      enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
+      @Test
+      void shouldOnlyEnrichLockLink() {
+        FileObject fileObject = mock(FileObject.class);
+        String filepath = "src/myfile";
 
-      verify(appender, never()).appendEmbedded(anyString(), any(FileLockDto.class));
-      verify(appender).appendLink("lock", "scm/api/v2/file-lock/hitchhiker/HeartOfGold/lock/src%2Fmyfile");
+        when(fileObject.getPath()).thenReturn(filepath);
+        when(lockCommandBuilder.status(filepath)).thenReturn(Optional.empty());
+
+        enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
+
+        verify(appender, never()).appendEmbedded(anyString(), any(FileLockDto.class));
+        verify(appender).appendLink("lock", "scm/api/v2/file-lock/hitchhiker/HeartOfGold/lock/src%2Fmyfile");
+      }
     }
   }
 
