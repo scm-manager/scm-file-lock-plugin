@@ -40,23 +40,22 @@ import { useTranslation } from "react-i18next";
 type Props = {
   repository: Repository;
   files: File[];
-  validateFiles: (valid: boolean) => void;
+  shouldValidate: boolean;
   path: string;
 };
 
-const FileLockUploadModal: FC<Props> = ({ repository, files, validateFiles, path }) => {
+const FileLockUploadModal: FC<Props> = ({ repository, files, path, shouldValidate }) => {
   const { data, error } = useFileLocks(repository);
   const { unlockFiles, error: unlockError } = useUnlockFiles(repository);
   const [showModal, setShowModal] = useState(false);
   const [t] = useTranslation("plugins");
 
   useEffect(() => {
-    if (data) {
+    if (data && shouldValidate) {
       const valid = validate();
-      validateFiles(valid);
       setShowModal(!valid);
     }
-  }, [files, data]);
+  }, [files, data, shouldValidate]);
 
   const resolveFilePath = (file: File) => {
     if (path) {

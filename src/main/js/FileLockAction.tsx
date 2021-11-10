@@ -59,7 +59,14 @@ const UnlockModal: FC<ModalProps> = ({ fileLock, setShowModal, unlock }) => {
       body={t("scm-file-lock-plugin.unlockModal.description", { username: fileLock.username })}
       footer={
         <ButtonGroup>
-          <Button color="warning" label={t("scm-file-lock-plugin.unlockModal.unlockButton")} action={unlock} />
+          <Button
+            color="warning"
+            label={t("scm-file-lock-plugin.unlockModal.unlockButton")}
+            action={() => {
+              unlock();
+              setShowModal(false);
+            }}
+          />
           <Button label={t("scm-file-lock-plugin.unlockModal.cancelButton")} action={() => setShowModal(false)} />
         </ButtonGroup>
       }
