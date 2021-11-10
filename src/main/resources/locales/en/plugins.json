@@ -62,7 +62,7 @@
   "verbs": {
     "repository": {
       "configureFileLock": {
-        "displayName": "configure file lock config",
+        "displayName": "configure file lock",
         "description": "May modify the repository specific file lock configurations"
       }
     }
