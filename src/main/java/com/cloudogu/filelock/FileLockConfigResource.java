@@ -77,7 +77,7 @@ public class FileLockConfigResource {
     description = "success",
     content = @Content(
       mediaType = MEDIA_TYPE,
-      schema = @Schema(implementation = RepositoryConfig.class)
+      schema = @Schema(implementation = RepositoryConfigDto.class)
     )
   )
   @ApiResponse(responseCode = "401", description = "not authenticated / invalid credentials")
