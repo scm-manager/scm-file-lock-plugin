@@ -21,28 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.cloudogu.filelock;
 
+import sonia.scm.repository.Repository;
+import sonia.scm.store.ConfigurationStore;
+import sonia.scm.store.ConfigurationStoreFactory;
 
-plugins {
-  id 'org.scm-manager.smp' version '0.9.4'
-}
+import javax.inject.Inject;
 
-dependencies {
-  // define dependencies to other plugins here e.g.:
-  // plugin "sonia.scm.plugins:scm-mail-plugin:2.1.0"
-  // optionalPlugin "sonia.scm.plugins:scm-editor-plugin:2.0.0"
-}
+public class RepositoryConfigStore {
 
-scmPlugin {
-  scmVersion = "2.26.0"
-  displayName = "File Lock"
-  description = "Creates file locks to prevent write access"
-  author = "Cloudogu GmbH"
-  category = "Workflow"
+  private static final String STORE_NAME = "lock-config";
 
-  openapi {
-    packages = [
-      "com.cloudogu.filelock"
-    ]
+  private final ConfigurationStoreFactory configurationStoreFactory;
+
+  @Inject
+  public RepositoryConfigStore(ConfigurationStoreFactory configurationStoreFactory) {
+    this.configurationStoreFactory = configurationStoreFactory;
+  }
+
+  public RepositoryConfig getConfig(Repository repository) {
+    return createStore(repository).getOptional().orElse(new RepositoryConfig());
+  }
+
+  public void updateConfig(Repository repository, RepositoryConfig config) {
+    PermissionCheck.checkConfigure(repository);
+    createStore(repository).set(config);
+  }
+
+  private ConfigurationStore<RepositoryConfig> createStore(Repository repository) {
+    return configurationStoreFactory.withType(RepositoryConfig.class).withName(STORE_NAME).forRepository(repository).build();
   }
 }

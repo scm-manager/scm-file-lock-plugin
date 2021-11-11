@@ -1,0 +1,4 @@
+- type: added
+  description: Repository configuration to disable file-lock frontend support ([#4](https://github.com/scm-manager/scm-file-lock-plugin/pull/4))
+- type: added
+  description: Show conflicting files on upload ([#4](https://github.com/scm-manager/scm-file-lock-plugin/pull/4))

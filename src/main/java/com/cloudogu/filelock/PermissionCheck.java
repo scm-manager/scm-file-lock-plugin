@@ -21,28 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.cloudogu.filelock;
 
+import sonia.scm.repository.Repository;
+import sonia.scm.repository.RepositoryPermissions;
 
-plugins {
-  id 'org.scm-manager.smp' version '0.9.4'
-}
+public class PermissionCheck {
 
-dependencies {
-  // define dependencies to other plugins here e.g.:
-  // plugin "sonia.scm.plugins:scm-mail-plugin:2.1.0"
-  // optionalPlugin "sonia.scm.plugins:scm-editor-plugin:2.0.0"
-}
+  private PermissionCheck() {}
 
-scmPlugin {
-  scmVersion = "2.26.0"
-  displayName = "File Lock"
-  description = "Creates file locks to prevent write access"
-  author = "Cloudogu GmbH"
-  category = "Workflow"
+  public static final String CONFIGURE_FILE_LOCK = "configureFileLock";
 
-  openapi {
-    packages = [
-      "com.cloudogu.filelock"
-    ]
+  public static boolean mayConfigure(Repository repository) {
+    return RepositoryPermissions.custom(CONFIGURE_FILE_LOCK, repository).isPermitted();
+  }
+
+  public static void checkConfigure(Repository repository) {
+    RepositoryPermissions.custom(CONFIGURE_FILE_LOCK, repository).check();
   }
 }

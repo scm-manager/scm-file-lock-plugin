@@ -23,7 +23,48 @@
       "title": "Files are locked",
       "description": "The files you are trying to upload are locked. You can unlock all conflicting files and upload afterwards.",
       "unlockButton": "Unlock conflicting files",
-      "cancelButton": "Cancel"
+      "cancelButton": "Cancel",
+      "column": {
+        "file": "File",
+        "user": "Locked by",
+        "date": "Locked since"
+      }
+    },
+    "unlockModal": {
+      "title": "File locked by \"{{username}}\"",
+      "description": "You may unlock this file by yourself. But consider to ask the user \"{{username}}\" first.",
+      "cancelButton": "Cancel",
+      "unlockButton": "Unlock file"
+    },
+    "config": {
+      "subtitle": "File lock configuration",
+      "enabled": {
+        "label": "Show/Modify file locks via UI",
+        "helpText": "File locks can be seen and managed via UI. Disabling this config does not prevent file locks via the native commands."
+      },
+      "notification": "Configuration changed successfully!",
+      "submitButton": "Submit"
+    },
+    "navLink": {
+      "config": "File lock"
+    }
+  },
+  "permissions": {
+    "repository": {
+      "configureFileLock": {
+        "*": {
+          "displayName": "Modify repository specific file lock configuration",
+          "description": "May modify the repository specific file lock configuration for all repositories"
+        }
+      }
+    }
+  },
+  "verbs": {
+    "repository": {
+      "configureFileLock": {
+        "displayName": "configure file lock",
+        "description": "May modify the repository specific file lock configurations"
+      }
     }
   }
 }

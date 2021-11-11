@@ -44,6 +44,7 @@ import javax.inject.Provider;
 import java.net.URI;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,6 +61,8 @@ class RepositoryLinkEnricherTest {
   private RepositoryServiceFactory serviceFactory;
   @Mock
   private RepositoryService service;
+  @Mock
+  private RepositoryConfigStore configStore;
 
   @Mock
   private HalAppender appender;
@@ -76,6 +79,8 @@ class RepositoryLinkEnricherTest {
 
   @Test
   void shouldNotEnrichLink() {
+    when(serviceFactory.create(repository)).thenReturn(service);
+    when(service.isSupported(Command.FILE_LOCK)).thenReturn(false);
     enricher.enrich(HalEnricherContext.of(repository), appender);
 
     verify(appender, never()).appendLink(anyString(), anyString());
@@ -83,12 +88,41 @@ class RepositoryLinkEnricherTest {
 
   @Test
   @SubjectAware(permissions = "repository:push:id-1")
-  void shouldEnrichLink() {
+  void shouldNotEnrichConfigLinkIfNotPermitted() {
+    when(configStore.getConfig(repository)).thenReturn(new RepositoryConfig());
     when(serviceFactory.create(repository)).thenReturn(service);
     when(service.isSupported(Command.FILE_LOCK)).thenReturn(true);
 
     enricher.enrich(HalEnricherContext.of(repository), appender);
 
     verify(appender).appendLink("fileLocks", "scm/api/v2/file-lock/hitchhiker/HeartOfGold");
+    verify(appender, never()).appendLink(eq("fileLockConfig"), anyString());
+  }
+
+  @Test
+  @SubjectAware(permissions = {"repository:push:id-1", "repository:configureFileLock:id-1"})
+  void shouldEnrichConfigLinkIfPermitted() {
+    when(configStore.getConfig(repository)).thenReturn(new RepositoryConfig());
+    when(serviceFactory.create(repository)).thenReturn(service);
+    when(service.isSupported(Command.FILE_LOCK)).thenReturn(true);
+
+    enricher.enrich(HalEnricherContext.of(repository), appender);
+
+    verify(appender).appendLink("fileLocks", "scm/api/v2/file-lock/hitchhiker/HeartOfGold");
+    verify(appender).appendLink("fileLockConfig", "scm/api/v2/file-lock/hitchhiker/HeartOfGold/config");
+  }
+
+  @Test
+  @SubjectAware(permissions = "repository:push:id-1")
+  void shouldNotEnrichLinkIfConfigDisabled() {
+    RepositoryConfig repositoryConfig = new RepositoryConfig();
+    repositoryConfig.setEnabled(false);
+    when(serviceFactory.create(repository)).thenReturn(service);
+    when(service.isSupported(Command.FILE_LOCK)).thenReturn(true);
+    when(configStore.getConfig(repository)).thenReturn(repositoryConfig);
+
+    enricher.enrich(HalEnricherContext.of(repository), appender);
+
+    verify(appender, never()).appendLink(anyString(), anyString());
   }
 }

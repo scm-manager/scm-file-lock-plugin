@@ -21,28 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import { useMutation, useQueryClient, useQuery } from "react-query";
+import { apiClient } from "@scm-manager/ui-components";
+import { HalRepresentation, Link } from "@scm-manager/ui-types";
 
+export type FileLockConfig = HalRepresentation & {
+  enabled: boolean;
+};
 
-plugins {
-  id 'org.scm-manager.smp' version '0.9.4'
-}
+export const useFileLockConfig = (link: string) => {
+  const { error, isLoading, data } = useQuery<FileLockConfig, Error>("fileLockConfig", () =>
+    apiClient.get(link).then(res => res.json())
+  );
 
-dependencies {
-  // define dependencies to other plugins here e.g.:
-  // plugin "sonia.scm.plugins:scm-mail-plugin:2.1.0"
-  // optionalPlugin "sonia.scm.plugins:scm-editor-plugin:2.0.0"
-}
+  return {
+    error,
+    isLoading,
+    data
+  };
+};
 
-scmPlugin {
-  scmVersion = "2.26.0"
-  displayName = "File Lock"
-  description = "Creates file locks to prevent write access"
-  author = "Cloudogu GmbH"
-  category = "Workflow"
-
-  openapi {
-    packages = [
-      "com.cloudogu.filelock"
-    ]
-  }
-}
+export const useUpdateFileLockConfig = () => {
+  const queryClient = useQueryClient();
+  const { mutate, isLoading, error } = useMutation<unknown, Error, FileLockConfig>(
+    (config: FileLockConfig) => {
+      return apiClient.put(
+        (config._links.update as Link).href,
+        config,
+        "application/vnd.scmm-file-lock-config+json;v=2"
+      );
+    },
+    {
+      onSuccess: () => {
+        return queryClient.invalidateQueries(["fileLockConfig"]);
+      }
+    }
+  );
+  return {
+    update: (config: FileLockConfig) => {
+      mutate(config);
+    },
+    isLoading,
+    error
+  };
+};

@@ -21,28 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.cloudogu.filelock;
 
+import com.cloudogu.conveyor.GenerateDto;
+import com.cloudogu.conveyor.Include;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-plugins {
-  id 'org.scm-manager.smp' version '0.9.4'
-}
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
-dependencies {
-  // define dependencies to other plugins here e.g.:
-  // plugin "sonia.scm.plugins:scm-mail-plugin:2.1.0"
-  // optionalPlugin "sonia.scm.plugins:scm-editor-plugin:2.0.0"
-}
-
-scmPlugin {
-  scmVersion = "2.26.0"
-  displayName = "File Lock"
-  description = "Creates file locks to prevent write access"
-  author = "Cloudogu GmbH"
-  category = "Workflow"
-
-  openapi {
-    packages = [
-      "com.cloudogu.filelock"
-    ]
-  }
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+@Getter
+@Setter
+@NoArgsConstructor
+@GenerateDto
+public class RepositoryConfig {
+  @Include
+  private boolean enabled = true;
 }
