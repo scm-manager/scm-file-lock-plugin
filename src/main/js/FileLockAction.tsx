@@ -50,6 +50,8 @@ type ModalProps = {
 
 const UnlockModal: FC<ModalProps> = ({ fileLock, setShowModal, unlock }) => {
   const [t] = useTranslation("plugins");
+  const [initialFocusNode, setInitialFocusNode] = useState<HTMLButtonElement | null>(null);
+
   return (
     <Modal
       active={true}
@@ -57,6 +59,7 @@ const UnlockModal: FC<ModalProps> = ({ fileLock, setShowModal, unlock }) => {
       headColor="warning"
       title={t("scm-file-lock-plugin.unlockModal.title", { username: fileLock.username })}
       body={t("scm-file-lock-plugin.unlockModal.description", { username: fileLock.username })}
+      initialFocusNode={initialFocusNode}
       footer={
         <ButtonGroup>
           <Button
@@ -66,6 +69,7 @@ const UnlockModal: FC<ModalProps> = ({ fileLock, setShowModal, unlock }) => {
               unlock();
               setShowModal(false);
             }}
+            ref={setInitialFocusNode}
           />
           <Button label={t("scm-file-lock-plugin.unlockModal.cancelButton")} action={() => setShowModal(false)} />
         </ButtonGroup>

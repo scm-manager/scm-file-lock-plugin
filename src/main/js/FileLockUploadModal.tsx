@@ -49,6 +49,7 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, path, shouldValidat
   const { unlockFiles, error: unlockError } = useUnlockFiles(repository);
   const [showModal, setShowModal] = useState(false);
   const [t] = useTranslation("plugins");
+  const [initialFocusNode, setInitialFocusNode] = useState<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (data && shouldValidate) {
@@ -123,10 +124,12 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, path, shouldValidat
               color="warning"
               label={t("scm-file-lock-plugin.uploadLockModal.unlockButton")}
               action={unlockConflictingFiles}
+              ref={setInitialFocusNode}
             />
             <Button label={t("scm-file-lock-plugin.uploadLockModal.cancelButton")} action={() => setShowModal(false)} />
           </ButtonGroup>
         }
+        initialFocusNode={initialFocusNode}
       />
     );
   }

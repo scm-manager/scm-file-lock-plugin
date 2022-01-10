@@ -48,6 +48,7 @@ export const DarkHoverIcon = styled(Icon)`
 
 const FileLockDownloadModal: FC<ModalProps> = ({ onClose, lock, downloadFile }) => {
   const [t] = useTranslation("plugins");
+  const [initialFocusNode, setInitialFocusNode] = useState<HTMLButtonElement | null>(null);
 
   return (
     <Modal
@@ -55,6 +56,7 @@ const FileLockDownloadModal: FC<ModalProps> = ({ onClose, lock, downloadFile }) 
       active={true}
       closeFunction={onClose}
       body={t("scm-file-lock-plugin.downloadModal.description")}
+      initialFocusNode={initialFocusNode}
       footer={
         <ButtonGroup>
           <Button
@@ -65,6 +67,7 @@ const FileLockDownloadModal: FC<ModalProps> = ({ onClose, lock, downloadFile }) 
               downloadFile();
               onClose();
             }}
+            ref={setInitialFocusNode}
           />
           <Button
             label={t("scm-file-lock-plugin.downloadModal.downloadButton")}
