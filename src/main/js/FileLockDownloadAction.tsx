@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import React, { FC, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import { File, Link, Repository } from "@scm-manager/ui-types";
 import { Button, ButtonGroup, Icon, Modal, Tooltip } from "@scm-manager/ui-components";
 import { useTranslation } from "react-i18next";
@@ -48,7 +48,7 @@ export const DarkHoverIcon = styled(Icon)`
 
 const FileLockDownloadModal: FC<ModalProps> = ({ onClose, lock, downloadFile }) => {
   const [t] = useTranslation("plugins");
-  const [initialFocusNode, setInitialFocusNode] = useState<HTMLButtonElement | null>(null);
+  const initialFocusRef = useRef<HTMLButtonElement>(null);
 
   return (
     <Modal
@@ -56,7 +56,7 @@ const FileLockDownloadModal: FC<ModalProps> = ({ onClose, lock, downloadFile }) 
       active={true}
       closeFunction={onClose}
       body={t("scm-file-lock-plugin.downloadModal.description")}
-      initialFocusNode={initialFocusNode}
+      initialFocusRef={initialFocusRef}
       footer={
         <ButtonGroup>
           <Button
@@ -67,7 +67,7 @@ const FileLockDownloadModal: FC<ModalProps> = ({ onClose, lock, downloadFile }) 
               downloadFile();
               onClose();
             }}
-            ref={setInitialFocusNode}
+            ref={initialFocusRef}
           />
           <Button
             label={t("scm-file-lock-plugin.downloadModal.downloadButton")}

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { File, Repository } from "@scm-manager/ui-types";
 import {
   Button,
@@ -49,7 +49,7 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, path, shouldValidat
   const { unlockFiles, error: unlockError } = useUnlockFiles(repository);
   const [showModal, setShowModal] = useState(false);
   const [t] = useTranslation("plugins");
-  const [initialFocusNode, setInitialFocusNode] = useState<HTMLButtonElement | null>(null);
+  const initialFocusRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (data && shouldValidate) {
@@ -124,12 +124,12 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, path, shouldValidat
               color="warning"
               label={t("scm-file-lock-plugin.uploadLockModal.unlockButton")}
               action={unlockConflictingFiles}
-              ref={setInitialFocusNode}
+              ref={initialFocusRef}
             />
             <Button label={t("scm-file-lock-plugin.uploadLockModal.cancelButton")} action={() => setShowModal(false)} />
           </ButtonGroup>
         }
-        initialFocusNode={initialFocusNode}
+        initialFocusRef={initialFocusRef}
       />
     );
   }

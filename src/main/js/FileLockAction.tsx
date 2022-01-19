@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import React, { FC, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import { File, HalRepresentation, Repository } from "@scm-manager/ui-types";
 import { Button, ButtonGroup, Modal, Tooltip, useDateFormatter } from "@scm-manager/ui-components";
 import { useTranslation } from "react-i18next";
@@ -50,7 +50,7 @@ type ModalProps = {
 
 const UnlockModal: FC<ModalProps> = ({ fileLock, setShowModal, unlock }) => {
   const [t] = useTranslation("plugins");
-  const [initialFocusNode, setInitialFocusNode] = useState<HTMLButtonElement | null>(null);
+  const initialFocusRef = useRef<HTMLButtonElement>(null);
 
   return (
     <Modal
@@ -59,7 +59,7 @@ const UnlockModal: FC<ModalProps> = ({ fileLock, setShowModal, unlock }) => {
       headColor="warning"
       title={t("scm-file-lock-plugin.unlockModal.title", { username: fileLock.username })}
       body={t("scm-file-lock-plugin.unlockModal.description", { username: fileLock.username })}
-      initialFocusNode={initialFocusNode}
+      initialFocusRef={initialFocusRef}
       footer={
         <ButtonGroup>
           <Button
@@ -69,7 +69,7 @@ const UnlockModal: FC<ModalProps> = ({ fileLock, setShowModal, unlock }) => {
               unlock();
               setShowModal(false);
             }}
-            ref={setInitialFocusNode}
+            ref={initialFocusRef}
           />
           <Button label={t("scm-file-lock-plugin.unlockModal.cancelButton")} action={() => setShowModal(false)} />
         </ButtonGroup>
