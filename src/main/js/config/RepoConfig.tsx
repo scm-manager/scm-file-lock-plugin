@@ -33,8 +33,10 @@ import {
 import React, { FC, useState } from "react";
 import { FileLockConfig, useFileLockConfig, useUpdateFileLockConfig } from "./useFileLockConfig";
 import { useTranslation } from "react-i18next";
+import { Repository } from "@scm-manager/ui-types";
 
 type Props = {
+  repository: Repository;
   link: string;
 };
 
@@ -83,8 +85,8 @@ const RepoConfigEditor: FC<EditorProps> = ({ data }) => {
   );
 };
 
-const RepoConfig: FC<Props> = ({ link }) => {
-  const { data, error, isLoading } = useFileLockConfig(link);
+const RepoConfig: FC<Props> = ({ link, repository }) => {
+  const { data, error, isLoading } = useFileLockConfig(repository, link);
 
   if (isLoading) {
     return <Loading />;
