@@ -23,15 +23,16 @@
  */
 import { useMutation, useQueryClient, useQuery } from "react-query";
 import { apiClient } from "@scm-manager/ui-components";
-import { HalRepresentation, Link } from "@scm-manager/ui-types";
+import { HalRepresentation, Link, Repository } from "@scm-manager/ui-types";
 
 export type FileLockConfig = HalRepresentation & {
   enabled: boolean;
 };
 
-export const useFileLockConfig = (link: string) => {
-  const { error, isLoading, data } = useQuery<FileLockConfig, Error>("fileLockConfig", () =>
-    apiClient.get(link).then(res => res.json())
+export const useFileLockConfig = (repository: Repository, link: string) => {
+  const { error, isLoading, data } = useQuery<FileLockConfig, Error>(
+    ["file-lock-config", repository.namespace, repository.name],
+    () => apiClient.get(link).then(res => res.json())
   );
 
   return {
@@ -53,7 +54,7 @@ export const useUpdateFileLockConfig = () => {
     },
     {
       onSuccess: () => {
-        return queryClient.invalidateQueries(["fileLockConfig"]);
+        return queryClient.invalidateQueries(["file-lock-config"]);
       }
     }
   );
