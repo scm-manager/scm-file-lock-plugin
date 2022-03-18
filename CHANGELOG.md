@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.1.1 - 2022-03-18
+### Fixed
+- Fix unspecific cache key for repo config ([#6](https://github.com/scm-manager/scm-file-lock-plugin/pull/6))
+
 ## 1.1.0 - 2022-01-24
 ### Added
 - Improve modal accessibility ([#5](https://github.com/scm-manager/scm-file-lock-plugin/pull/5))

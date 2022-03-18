@@ -1,2 +1,0 @@
-- type: fixed
-  description: Fix unspecific cache key for repo config ([#6](https://github.com/scm-manager/scm-file-lock-plugin/pull/6))
