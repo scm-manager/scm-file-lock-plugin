@@ -11,7 +11,7 @@
     },
     "downloadModal": {
       "title": "Datei sperren?",
-      "description": "Gesperrte Dateien können nicht von anderen Benutzern geändert werden. Die Sperre kann von jedem Nutzer mit Schreibrechten auf dieses Repository entfernt werden.",
+      "description": "Gesperrte Dateien können nicht von anderen Nutzenden geändert werden. Die Sperre kann mit Schreibrechten auf dieses Repository entfernt werden.",
       "lockDownloadButton": "Sperren und herunterladen",
       "downloadButton": "Ohne Sperre herunterladen"
     },
@@ -31,30 +31,30 @@
       }
     },
     "unlockModal": {
-      "title": "Dateisperre von \"{{username}}\"",
-      "description": "Sie können diese Dateisperre entfernen. Sie sollten dies jedoch vorher mit \"{{username}}\" abstimmen.",
+      "title": "File-Lock von \"{{username}}\"",
+      "description": "Sie können dieses File-Lock entfernen. Sie sollten dies jedoch vorher mit \"{{username}}\" abstimmen.",
       "cancelButton": "Abbrechen",
       "unlockButton": "Datei entsperren"
     },
     "config": {
-      "subtitle": "Dateisperren konfigurieren",
+      "subtitle": "File-Lock konfigurieren",
       "enabled": {
-        "label": "Dateisperren über Oberfläche anzeigen/bearbeiten",
-        "helpText": "Die Dateisperren werden in der Oberfläche angezeigt und können direkt verändert werden. Das Deaktivieren dieser Funktion verhindert nicht das Setzen von Dateisperren über die nativen Kommandos."
+        "label": "File-Lock über Oberfläche anzeigen/bearbeiten",
+        "helpText": "File-Locks werden in der Oberfläche angezeigt und können direkt verändert werden. Das Deaktivieren dieser Funktion verhindert nicht das Setzen von File-Locks über die nativen Kommandos."
       },
       "notification": "Einstellungen wurden erfolgreich geändert!",
       "submitButton": "Speichern"
     },
     "navLink": {
-      "config": "Dateisperre"
+      "config": "File-Lock"
     }
   },
   "permissions": {
     "repository": {
       "configureFileLock": {
         "*": {
-          "displayName": "Repository-spezifische Dateisperren Konfiguration ändern",
-          "description": "Darf die repository-spezifischen Dateisperren Konfiguration verändern"
+          "displayName": "Repository-spezifische File-Lock Konfiguration ändern",
+          "description": "Darf die repository-spezifischen File-Lock Konfiguration verändern"
         }
       }
     }
@@ -62,8 +62,8 @@
   "verbs": {
     "repository": {
       "configureFileLock": {
-        "displayName": "Dateisperren Konfiguration ändern",
-        "description": "Darf die Dateisperren Konfiguration verändern"
+        "displayName": "File-Lock Konfiguration ändern",
+        "description": "Darf die File-Lock Konfiguration verändern"
       }
     }
   }
