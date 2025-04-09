@@ -95,13 +95,10 @@ class FileEnricherTest {
 
     @Test
     void shouldNotEnrichIdLockCommandNotSupported() {
-      FileLock fileLock = new FileLock("src/test.md", "", "trillian", Instant.ofEpochMilli(10000));
       FileObject fileObject = mock(FileObject.class);
-      String filepath = "myfile";
 
       when(serviceFactory.create(repository)).thenReturn(service);
       when(service.isSupported(Command.FILE_LOCK)).thenReturn(false);
-      when(lockCommandBuilder.status(filepath)).thenReturn(Optional.of(fileLock));
 
       enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
 
@@ -154,12 +151,7 @@ class FileEnricherTest {
 
   @Test
   void shouldNotEnrichWithoutPermission() {
-    FileLock fileLock = new FileLock("src/test.md", "", "trillian", Instant.ofEpochMilli(10000));
     FileObject fileObject = mock(FileObject.class);
-    String filepath = "myfile";
-
-    when(lockCommandBuilder.status(filepath)).thenReturn(Optional.of(fileLock));
-
     enricher.enrich(HalEnricherContext.of(repository.getNamespaceAndName(), fileObject), appender);
 
     verify(appender, never()).appendEmbedded(anyString(), any(FileLockDto.class));

@@ -19,7 +19,7 @@ import { FileLockButton, FileLockIcon } from "./FileLockAction";
 import { FileLockDownloadButton, FileLockDownloadIcon, FileLockLargeDownloadButton } from "./FileLockDownloadAction";
 import FileLockUploadModal from "./FileLockUploadModal";
 import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
-import RepoConfig from "./config/RepoConfig";
+import RepoConfig from "./RepoConfig";
 
 binder.bind("repos.sources.tree.row.right", FileLockIcon, { priority: 1000 });
 binder.bind("repos.sources.content.actionbar", FileLockButton, { priority: 1000 });

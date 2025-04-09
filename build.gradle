@@ -25,7 +25,7 @@ dependencies {
 }
 
 scmPlugin {
-  scmVersion = "3.0.0"
+  scmVersion = "3.7.0"
   displayName = "File Lock"
   description = "Creates file locks to prevent write access"
   author = "Cloudogu GmbH"

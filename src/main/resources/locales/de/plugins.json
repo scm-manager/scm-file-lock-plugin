@@ -41,9 +41,7 @@
       "enabled": {
         "label": "File-Lock über Oberfläche anzeigen/bearbeiten",
         "helpText": "File-Locks werden in der Oberfläche angezeigt und können direkt verändert werden. Das Deaktivieren dieser Funktion verhindert nicht das Setzen von File-Locks über die nativen Kommandos."
-      },
-      "notification": "Einstellungen wurden erfolgreich geändert!",
-      "submitButton": "Speichern"
+      }
     },
     "navLink": {
       "config": "File-Lock"

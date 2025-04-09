@@ -41,9 +41,7 @@
       "enabled": {
         "label": "Show/Modify file locks via UI",
         "helpText": "File locks can be seen and managed via UI. Disabling this config does not prevent file locks via the native commands."
-      },
-      "notification": "Configuration changed successfully!",
-      "submitButton": "Submit"
+      }
     },
     "navLink": {
       "config": "File lock"
