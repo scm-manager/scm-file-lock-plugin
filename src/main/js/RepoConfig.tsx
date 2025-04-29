@@ -16,8 +16,8 @@
 
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { Subtitle, ConfigurationForm, Form, useDocumentTitleForRepository } from "@scm-manager/ui-core";
-import { HalRepresentation, Repository } from "@scm-manager/ui-types";
+import { Subtitle, ConfigurationForm, Form } from "@scm-manager/ui-core";
+import { HalRepresentation } from "@scm-manager/ui-types";
 
 type FileLockConfig = HalRepresentation & {
   enabled: boolean;
@@ -25,12 +25,10 @@ type FileLockConfig = HalRepresentation & {
 
 type Props = {
   link: string;
-  repository: Repository;
 };
 
-const RepoConfig: FC<Props> = ({ link, repository }) => {
+const RepoConfig: FC<Props> = ({ link }) => {
   const [t] = useTranslation("plugins");
-  useDocumentTitleForRepository(repository, t("scm-file-lock-plugin.config.subtitle"));
 
   return (
     <>
