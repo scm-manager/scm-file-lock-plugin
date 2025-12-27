@@ -51,8 +51,8 @@
     "repository": {
       "configureFileLock": {
         "*": {
-          "displayName": "Repository-spezifische File-Lock Konfiguration ändern",
-          "description": "Darf die repository-spezifischen File-Lock Konfiguration verändern"
+          "displayName": "Repository-spezifische File-Lock-Konfiguration ändern",
+          "description": "Darf die repository-spezifischen File-Lock-Konfiguration verändern"
         }
       }
     }
@@ -60,8 +60,8 @@
   "verbs": {
     "repository": {
       "configureFileLock": {
-        "displayName": "File-Lock Konfiguration ändern",
-        "description": "Darf die File-Lock Konfiguration verändern"
+        "displayName": "File-Lock-Konfiguration ändern",
+        "description": "Darf die File-Lock-Konfiguration verändern"
       }
     }
   }
