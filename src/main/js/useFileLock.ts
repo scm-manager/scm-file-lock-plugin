@@ -16,66 +16,72 @@
 
 import { apiClient } from "@scm-manager/ui-components";
 import { File, HalRepresentation, Link, Repository } from "@scm-manager/ui-types";
-import { useMutation, useQueryClient, useQuery } from "react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { FileLock } from "./FileLockAction";
 
 export const useFileLock = (repository: Repository, file: File) => {
   const queryClient = useQueryClient();
-  const { mutate, isLoading, error } = useMutation<unknown, Error, boolean>(
-    (lock: boolean) => {
+  const {
+    mutate,
+    isPending: isLoading,
+    error,
+  } = useMutation<unknown, Error, boolean>({
+    mutationFn: (lock: boolean) => {
       if (lock) {
         return apiClient.post((file._links.lock as Link).href);
       } else {
         return apiClient.delete((file._links.unlock as Link).href);
       }
     },
-    {
-      onSuccess: () => {
-        return queryClient.invalidateQueries(["repository", repository.namespace, repository.name]);
-      }
-    }
-  );
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["repository", repository.namespace, repository.name] }),
+  });
   return {
     lock: file._links.lock ? () => mutate(true) : undefined,
     unlock: file._links.unlock ? () => mutate(false) : undefined,
     isLoading,
-    error
+    error,
   };
 };
 
 export const useUnlockFiles = (repository: Repository) => {
   const queryClient = useQueryClient();
-  const { mutate, isLoading, error } = useMutation<unknown, Error, FileLock[]>(
-    ["repository", repository.namespace, repository.name, "file-locks"],
-    (locks: FileLock[]) => {
-      const promises = [];
+  const {
+    mutate,
+    isPending: isLoading,
+    error,
+  } = useMutation<unknown, Error, FileLock[]>({
+    mutationKey: ["repository", repository.namespace, repository.name, "file-locks"],
+    mutationFn: (locks: FileLock[]) => {
+      const promises: Promise<unknown>[] = [];
       for (let lock of locks) {
         promises.push(apiClient.delete((lock._links.unlock as Link).href));
       }
       return Promise.all(promises);
     },
-    {
-      onSuccess: () => {
-        return queryClient.invalidateQueries(["repository", repository.namespace, repository.name]);
-      }
-    }
-  );
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ["repository", repository.namespace, repository.name] });
+    },
+  });
   return {
     unlockFiles: (locks: FileLock[]) => mutate(locks),
     isLoading,
-    error
+    error,
   };
 };
 
 export const useFileLocks = (repository: Repository) => {
-  const { error, isLoading, data } = useQuery<HalRepresentation, Error>(
-    ["repository", repository.namespace, repository.name, "file-locks"],
-    () => apiClient.get((repository._links.fileLocks as Link).href).then(res => res.json())
-  );
+  const {
+    error,
+    isPending: isLoading,
+    data,
+  } = useQuery<HalRepresentation, Error>({
+    queryKey: ["repository", repository.namespace, repository.name, "file-locks"],
+    queryFn: () => apiClient.get((repository._links.fileLocks as Link).href).then((res) => res.json()),
+  });
 
   return {
     error,
     isLoading,
-    data
+    data,
   };
 };

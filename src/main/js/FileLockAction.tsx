@@ -16,10 +16,10 @@
 
 import React, { FC, useRef, useState } from "react";
 import { File, HalRepresentation, Repository } from "@scm-manager/ui-types";
-import { Button, ButtonGroup, Modal, Tooltip, useDateFormatter } from "@scm-manager/ui-components";
+import { Modal } from "@scm-manager/ui-components";
+import { Button, Icon, Tooltip, useDateFormatter } from "@scm-manager/ui-core";
 import { useTranslation } from "react-i18next";
 import { useFileLock } from "./useFileLock";
-import { DarkHoverIcon } from "./FileLockDownloadAction";
 
 type Props = {
   repository: Repository;
@@ -54,18 +54,19 @@ const UnlockModal: FC<ModalProps> = ({ fileLock, setShowModal, unlock }) => {
       body={t("scm-file-lock-plugin.unlockModal.description", { username: fileLock.username })}
       initialFocusRef={initialFocusRef}
       footer={
-        <ButtonGroup>
+        <>
           <Button
-            color="warning"
-            label={t("scm-file-lock-plugin.unlockModal.unlockButton")}
-            action={() => {
+            className="is-warning"
+            onClick={() => {
               unlock();
               setShowModal(false);
             }}
             ref={initialFocusRef}
-          />
-          <Button label={t("scm-file-lock-plugin.unlockModal.cancelButton")} action={() => setShowModal(false)} />
-        </ButtonGroup>
+          >
+            {t("scm-file-lock-plugin.unlockModal.unlockButton")}
+          </Button>
+          <Button onClick={() => setShowModal(false)}>{t("scm-file-lock-plugin.unlockModal.cancelButton")}</Button>
+        </>
       }
     />
   );
@@ -74,13 +75,9 @@ const UnlockModal: FC<ModalProps> = ({ fileLock, setShowModal, unlock }) => {
 const FileLockAction: FC<Props> = ({ repository, file, type }) => {
   const [t] = useTranslation("plugins");
   const { isLoading, lock, unlock } = useFileLock(repository, file);
-  const fileLock: FileLock = file._embedded?.fileLock;
+  const fileLock = file._embedded?.fileLock as FileLock;
   const formatter = useDateFormatter({ date: fileLock?.timestamp });
   const [showUnlockModal, setShowUnlockModal] = useState(false);
-
-  const resolveLockColor = () => {
-    return fileLock.owned ? "success" : "warning";
-  };
 
   const resolveUnlockAction = () => {
     if (unlock) {
@@ -93,55 +90,44 @@ const FileLockAction: FC<Props> = ({ repository, file, type }) => {
   };
 
   if (!fileLock && lock) {
+    const lockTooltip = t("scm-file-lock-plugin.unlockIcon.tooltip");
     return (
-      <Tooltip
-        message={t("scm-file-lock-plugin.unlockIcon.tooltip")}
-        location="top"
-        className={type === "BUTTON" ? "pr-2" : ""}
-      >
-        {type === "ICON" ? (
-          <DarkHoverIcon name="lock-open" color="success" onClick={lock} tabIndex={0} onEnter={lock} />
-        ) : (
-          <Button icon="lock-open" loading={isLoading} action={lock} />
-        )}
+      <Tooltip message={lockTooltip} className={type === "BUTTON" ? "pr-2" : ""}>
+        <Button
+          className={`is-success ${type === "ICON" && "is-inverted p-0 m-0"}`}
+          isLoading={isLoading}
+          onClick={lock}
+          aria-label={lockTooltip}
+        >
+          <Icon>lock-open</Icon>
+        </Button>
       </Tooltip>
     );
   } else if (unlock) {
+    const unlockTooltip = fileLock.owned
+      ? t("scm-file-lock-plugin.lockIcon.tooltip.owned", { timestamp: formatter?.formatDistance() })
+      : t("scm-file-lock-plugin.lockIcon.tooltip.default", {
+          userId: fileLock.username,
+          timestamp: formatter?.formatDistance(),
+        });
+    const lockColor = fileLock.owned ? "success" : "warning";
     return (
-      <Tooltip
-        message={
-          fileLock.owned
-            ? t("scm-file-lock-plugin.lockIcon.tooltip.owned", { timestamp: formatter?.formatDistance() })
-            : t("scm-file-lock-plugin.lockIcon.tooltip.default", {
-                userId: fileLock.username,
-                timestamp: formatter?.formatDistance()
-              })
-        }
-        location="top"
-        className={type === "BUTTON" ? "pr-2" : ""}
-      >
-        {type === "ICON" ? (
-          <DarkHoverIcon
-            name="lock"
-            color={resolveLockColor()}
+      <>
+        <Tooltip message={unlockTooltip} className={type === "BUTTON" ? "pr-2" : ""}>
+          <Button
+            className={`is-${lockColor} ${type === "ICON" && "is-inverted p-0 m-0"}`}
+            isLoading={isLoading}
             onClick={resolveUnlockAction}
-            tabIndex={0}
-            onEnter={resolveUnlockAction}
-          />
-        ) : (
-          <Button icon="lock" color={resolveLockColor()} loading={isLoading} action={resolveUnlockAction} />
-        )}
+            aria-label={unlockTooltip}
+          >
+            <Icon>lock</Icon>
+          </Button>
+        </Tooltip>
         {showUnlockModal ? <UnlockModal fileLock={fileLock} unlock={unlock} setShowModal={setShowUnlockModal} /> : null}
-      </Tooltip>
+      </>
     );
   }
   return null;
 };
 
-export const FileLockButton: FC<Props> = ({ repository, file }) => {
-  return <FileLockAction repository={repository} file={file} type="BUTTON" />;
-};
-
-export const FileLockIcon: FC<Props> = ({ repository, file }) => {
-  return <FileLockAction repository={repository} file={file} type="ICON" />;
-};
+export default FileLockAction;

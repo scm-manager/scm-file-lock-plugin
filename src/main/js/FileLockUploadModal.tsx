@@ -15,20 +15,12 @@
  */
 
 import React, { FC, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Column, Modal, Table, TextColumn } from "@scm-manager/ui-components";
+import { Button, DateFromNow, ErrorNotification, Loading } from "@scm-manager/ui-core";
 import { File, Repository } from "@scm-manager/ui-types";
-import {
-  Button,
-  ButtonGroup,
-  Column,
-  DateFromNow,
-  ErrorNotification,
-  Modal,
-  Table,
-  TextColumn
-} from "@scm-manager/ui-components";
 import { useFileLocks, useUnlockFiles } from "./useFileLock";
 import { FileLock } from "./FileLockAction";
-import { useTranslation } from "react-i18next";
 
 type Props = {
   repository: Repository;
@@ -63,7 +55,7 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, path, shouldValidat
     for (let file of files) {
       if (
         (data?._embedded?.fileLocks as FileLock[]).some(
-          lockedFile => lockedFile.path === resolveFilePath(file) && !lockedFile.owned
+          (lockedFile) => lockedFile.path === resolveFilePath(file) && !lockedFile.owned,
         )
       ) {
         valid = false;
@@ -90,44 +82,41 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, path, shouldValidat
     unlockFiles(getConflictingLocks());
   };
 
-  if (data) {
-    return (
-      <Modal
-        closeFunction={() => setShowModal(false)}
-        active={showModal}
-        headColor="warning"
-        title={t("scm-file-lock-plugin.uploadLockModal.title")}
-        body={
-          <>
-            {t("scm-file-lock-plugin.uploadLockModal.description")}
-            <br />
-            <Table data={getConflictingLocks()}>
-              <TextColumn header={t("scm-file-lock-plugin.uploadLockModal.column.file")} dataKey="filename" />
-              <TextColumn header={t("scm-file-lock-plugin.uploadLockModal.column.user")} dataKey="username" />
-              <Column header={t("scm-file-lock-plugin.uploadLockModal.column.date")}>
-                {row => <DateFromNow date={row.timestamp} />}
-              </Column>
-            </Table>
-            <ErrorNotification error={error || unlockError} />
-          </>
-        }
-        footer={
-          <ButtonGroup>
-            <Button
-              color="warning"
-              label={t("scm-file-lock-plugin.uploadLockModal.unlockButton")}
-              action={unlockConflictingFiles}
-              ref={initialFocusRef}
-            />
-            <Button label={t("scm-file-lock-plugin.uploadLockModal.cancelButton")} action={() => setShowModal(false)} />
-          </ButtonGroup>
-        }
-        initialFocusRef={initialFocusRef}
-      />
-    );
+  if (!data) {
+    return <Loading />;
   }
 
-  return null;
+  return (
+    <Modal
+      closeFunction={() => setShowModal(false)}
+      active={showModal}
+      headColor="warning"
+      title={t("scm-file-lock-plugin.uploadLockModal.title")}
+      body={
+        <>
+          {t("scm-file-lock-plugin.uploadLockModal.description")}
+          <br />
+          <Table data={getConflictingLocks()}>
+            <TextColumn header={t("scm-file-lock-plugin.uploadLockModal.column.file")} dataKey="filename" />
+            <TextColumn header={t("scm-file-lock-plugin.uploadLockModal.column.user")} dataKey="username" />
+            <Column header={t("scm-file-lock-plugin.uploadLockModal.column.date")}>
+              {(row) => <DateFromNow date={row.timestamp} />}
+            </Column>
+          </Table>
+          <ErrorNotification error={error || unlockError} />
+        </>
+      }
+      footer={
+        <>
+          <Button className="is-warning" onClick={unlockConflictingFiles} ref={initialFocusRef}>
+            {t("scm-file-lock-plugin.uploadLockModal.unlockButton")}
+          </Button>
+          <Button onClick={() => setShowModal(false)}>{t("scm-file-lock-plugin.uploadLockModal.cancelButton")}</Button>
+        </>
+      }
+      initialFocusRef={initialFocusRef}
+    />
+  );
 };
 
 export default FileLockUploadModal;

@@ -14,22 +14,47 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
-import { FileLockButton, FileLockIcon } from "./FileLockAction";
-import { FileLockDownloadButton, FileLockDownloadIcon, FileLockLargeDownloadButton } from "./FileLockDownloadAction";
-import FileLockUploadModal from "./FileLockUploadModal";
+import React from "react";
 import { ConfigurationBinder as cfgBinder } from "@scm-manager/ui-components";
+import { binder, extensionPoints } from "@scm-manager/ui-extensions";
+import FileLockAction from "./FileLockAction";
+import FileLockDownloadAction from "./FileLockDownloadAction";
+import FileLockUploadModal from "./FileLockUploadModal";
 import RepoConfig from "./RepoConfig";
+import FileLockDownloadModalAction from "./FileLockDownloadModalAction";
 
-binder.bind("repos.sources.tree.row.right", FileLockIcon, { priority: 1000 });
-binder.bind("repos.sources.content.actionbar", FileLockButton, { priority: 1000 });
-binder.bind("repos.sources.content.actionbar.download", FileLockDownloadButton, { priority: 1000 });
-binder.bind("repos.sources.actionbar.download", FileLockDownloadIcon, { priority: 1000 });
+binder.bind("repos.sources.tree.row.right", (props: any) => <FileLockAction type="ICON" {...props} />, {
+  priority: 1000,
+});
+binder.bind("repos.sources.content.actionbar", (props: any) => <FileLockAction type="BUTTON" {...props} />, {
+  priority: 1000,
+});
+
+binder.bind<extensionPoints.FileViewActionBarOverflowMenu>(
+  "repos.sources.content.actionbar.menu",
+  {
+    category: "Editor",
+    label: "scm-file-lock-plugin.downloadLock.label",
+    icon: "download",
+    modalElement: FileLockDownloadModalAction,
+  },
+  {
+    predicate: (props) => props.file && ("lock" in props.file._links || "unlock" in props.file._links),
+    priority: 1000,
+  },
+);
+binder.bind("repos.sources.actionbar.download", (props: any) => <FileLockDownloadAction type="ICON" {...props} />, {
+  priority: 1000,
+});
+binder.bind("repos.sources.content.downloadButton", (props: any) => (
+  <FileLockDownloadAction type="LARGE_BUTTON" {...props} />
+));
+
 binder.bind("editorPlugin.file.upload.validation", FileLockUploadModal);
-binder.bind("repos.sources.content.downloadButton", FileLockLargeDownloadButton);
+
 cfgBinder.bindRepositorySetting(
   "/filelock-config",
   "scm-file-lock-plugin.navLink.config",
   "fileLockConfig",
-  RepoConfig
+  RepoConfig,
 );

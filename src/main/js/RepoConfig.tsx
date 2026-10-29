@@ -16,18 +16,16 @@
 
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { Subtitle, ConfigurationForm, Form } from "@scm-manager/ui-core";
-import { HalRepresentation } from "@scm-manager/ui-types";
+import { Subtitle, ConfigurationForm, Form, useRepositoryFromParams } from "@scm-manager/ui-core";
+import { HalRepresentation, Link } from "@scm-manager/ui-types";
 
 type FileLockConfig = HalRepresentation & {
   enabled: boolean;
 };
 
-type Props = {
-  link: string;
-};
-
-const RepoConfig: FC<Props> = ({ link }) => {
+const RepoConfig: FC = () => {
+  const repository = useRepositoryFromParams();
+  const link = (repository._links["fileLockConfig"] as Link).href;
   const [t] = useTranslation("plugins");
 
   return (
