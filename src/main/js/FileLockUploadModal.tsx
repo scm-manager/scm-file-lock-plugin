@@ -16,8 +16,8 @@
 
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Column, Modal, Table, TextColumn } from "@scm-manager/ui-components";
-import { Button, DateFromNow, ErrorNotification, Loading } from "@scm-manager/ui-core";
+import { Modal } from "@scm-manager/ui-components";
+import { Button, DateFromNow, ErrorNotification, Loading, Table } from "@scm-manager/ui-core";
 import { File, Repository } from "@scm-manager/ui-types";
 import { useFileLocks, useUnlockFiles } from "./useFileLock";
 import { FileLock } from "./FileLockAction";
@@ -97,11 +97,11 @@ const FileLockUploadModal: FC<Props> = ({ repository, files, path, shouldValidat
           {t("scm-file-lock-plugin.uploadLockModal.description")}
           <br />
           <Table data={getConflictingLocks()}>
-            <TextColumn header={t("scm-file-lock-plugin.uploadLockModal.column.file")} dataKey="filename" />
-            <TextColumn header={t("scm-file-lock-plugin.uploadLockModal.column.user")} dataKey="username" />
-            <Column header={t("scm-file-lock-plugin.uploadLockModal.column.date")}>
+            <Table.TextColumn header={t("scm-file-lock-plugin.uploadLockModal.column.file")} dataKey="filename" />
+            <Table.TextColumn header={t("scm-file-lock-plugin.uploadLockModal.column.user")} dataKey="username" />
+            <Table.Column header={t("scm-file-lock-plugin.uploadLockModal.column.date")}>
               {(row) => <DateFromNow date={row.timestamp} />}
-            </Column>
+            </Table.Column>
           </Table>
           <ErrorNotification error={error || unlockError} />
         </>
